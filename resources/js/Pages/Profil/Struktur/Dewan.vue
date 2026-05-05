@@ -2,6 +2,7 @@
 import MainLayout from '@/Layouts/MainLayout.vue';
 import { Head, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import HeroSection from '@/Components/HeroSection.vue';
 
 const page = usePage();
 const footer = computed(() => page.props.footer);
@@ -10,15 +11,11 @@ const footer = computed(() => page.props.footer);
 <template>
     <Head title="Dewan Kehormatan & Pengurus" />
     <MainLayout :footer="footer">
-        <div class="bg-gradient-to-b from-red-600 to-red-800 text-white py-20 relative overflow-hidden">
-            <!-- Decorative circle -->
-            <div class="absolute -top-20 -right-20 w-64 h-64 bg-red-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
-            
-            <div class="container mx-auto px-4 text-center relative z-10">
-                <h1 class="text-4xl md:text-5xl font-bold mb-4 tracking-tight">Dewan Kehormatan & Pengurus</h1>
-                <p class="text-red-100 max-w-2xl mx-auto text-lg">Halaman ini sedang dalam tahap pengembangan (SPA Vue.js).</p>
-            </div>
-        </div>
+        <HeroSection 
+            title="Dewan Kehormatan & Pengurus" 
+            subtitle="Struktur Organisasi" 
+            description="Jajaran Dewan Kehormatan dan Pengurus Palang Merah Indonesia Kabupaten Wonosobo masa bakti 2021-2026."
+        />
 
         <div class="container mx-auto px-4 py-16 -mt-8 relative z-20">
             <div class="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-gray-100 text-center max-w-3xl mx-auto backdrop-blur-sm bg-white/90">

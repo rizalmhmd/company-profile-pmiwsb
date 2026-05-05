@@ -3,6 +3,8 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import MainLayout from '@/Layouts/MainLayout.vue';
 
+import HeroSection from '@/Components/HeroSection.vue';
+
 const props = defineProps({
     canLogin: Boolean,
     canRegister: Boolean,
@@ -11,114 +13,14 @@ const props = defineProps({
     bloodStocks: Array,
     mobileUnits: Array,
     footer: Object,
-    heroSliders: {
-        type: Array,
-        default: () => []
-    },
 });
-
-const currentSlide = ref(0);
-let slideInterval;
-
-const nextSlide = () => {
-    if (props.heroSliders.length > 0) {
-        currentSlide.value = (currentSlide.value + 1) % props.heroSliders.length;
-    }
-};
-
-const setSlide = (index) => {
-    currentSlide.value = index;
-    resetInterval();
-};
-
-const resetInterval = () => {
-    clearInterval(slideInterval);
-    if (props.heroSliders.length > 1) {
-        slideInterval = setInterval(nextSlide, 5000);
-    }
-};
-
-onMounted(() => {
-    resetInterval();
-});
-
-onUnmounted(() => {
-    clearInterval(slideInterval);
-});
-
-// Fallback image if no sliders are active
-const defaultImage = "https://images.unsplash.com/photo-1584432810601-6c7f27d2362b?q=80&w=2070&auto=format&fit=crop";
-
-const getImageUrl = (path) => {
-    return path ? `/storage/${path}` : defaultImage;
-};
 </script>
 
 <template>
     <MainLayout title="Beranda" :can-login="canLogin" :footer="footer">
         <main>
             <!-- Hero Slider -->
-            <section class="relative h-[450px] sm:h-[600px] bg-gray-200 overflow-hidden">
-                <!-- Slider Backgrounds & Dynamic Text -->
-                <div v-if="heroSliders.length > 0">
-                    <div v-for="(slider, index) in heroSliders" :key="slider.id"
-                        class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out"
-                        :class="index === currentSlide ? 'opacity-100 z-0' : 'opacity-0 -z-10'"
-                        :style="`background-image: url('${getImageUrl(slider.image_path)}');`">
-                        <div class="absolute inset-0 bg-gradient-to-r from-black/80 sm:from-black/70 to-transparent"></div>
-                        
-                        <!-- Slide Content -->
-                        <div class="container mx-auto px-4 h-full flex items-center relative z-10">
-                            <div class="max-w-2xl text-white transform transition-all duration-1000"
-                                :class="index === currentSlide ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'">
-                                <span v-if="slider.subtitle" class="inline-block px-2 py-0.5 sm:px-3 sm:py-1 bg-red-600 text-[10px] sm:text-xs font-bold uppercase tracking-wider rounded mb-3 sm:mb-4">{{ slider.subtitle }}</span>
-                                <span v-else class="inline-block px-2 py-0.5 sm:px-3 sm:py-1 bg-red-600 text-[10px] sm:text-xs font-bold uppercase tracking-wider rounded mb-3 sm:mb-4">PMI Wonosobo</span>
-                                
-                                <h2 v-if="slider.title" class="text-3xl sm:text-5xl md:text-6xl font-bold mb-4 sm:mb-6 leading-tight">{{ slider.title }}</h2>
-                                <h2 v-else class="text-3xl sm:text-5xl md:text-6xl font-bold mb-4 sm:mb-6 leading-tight">Bersama Untuk <span class="text-red-600">Kemanusiaan</span></h2>
-                                
-                                <p v-if="slider.description" class="text-sm sm:text-lg text-gray-200 mb-6 sm:mb-8 leading-relaxed line-clamp-3 sm:line-clamp-none">
-                                    {{ slider.description }}
-                                </p>
-                                <p v-else class="text-sm sm:text-lg text-gray-200 mb-6 sm:mb-8 leading-relaxed line-clamp-3 sm:line-clamp-none">
-                                    Menjadi lembaga kemanusiaan yang paling dicintai dan dipercaya di Kabupaten Wonosobo melalui pelayanan yang profesional dan responsif.
-                                </p>
-                                
-                                <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                                    <a href="#donor" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-lg font-bold transition text-center shadow-lg text-sm sm:text-base">Cek Jadwal Donor</a>
-                                    <a href="#pelayanan" class="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/30 px-6 py-3 sm:px-8 sm:py-4 rounded-lg font-bold transition text-center text-sm sm:text-base">Layanan Kesehatan</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Fallback Default Background -->
-                <div v-else class="absolute inset-0 bg-cover bg-center" :style="`background-image: url('${defaultImage}');`">
-                    <div class="absolute inset-0 bg-gradient-to-r from-black/80 sm:from-black/70 to-transparent"></div>
-                    <div class="container mx-auto px-4 h-full flex items-center relative z-10">
-                        <div class="max-w-2xl text-white">
-                            <span class="inline-block px-2 py-0.5 sm:px-3 sm:py-1 bg-red-600 text-[10px] sm:text-xs font-bold uppercase tracking-wider rounded mb-3 sm:mb-4">PMI Wonosobo</span>
-                            <h2 class="text-3xl sm:text-5xl md:text-6xl font-bold mb-4 sm:mb-6 leading-tight">Bersama Untuk <span class="text-red-600">Kemanusiaan</span></h2>
-                            <p class="text-sm sm:text-lg text-gray-200 mb-6 sm:mb-8 leading-relaxed line-clamp-3 sm:line-clamp-none">
-                                Menjadi lembaga kemanusiaan yang paling dicintai dan dipercaya di Kabupaten Wonosobo melalui pelayanan yang profesional dan responsif.
-                            </p>
-                            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                                <a href="#donor" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-lg font-bold transition text-center shadow-lg text-sm sm:text-base">Cek Jadwal Donor</a>
-                                <a href="#pelayanan" class="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/30 px-6 py-3 sm:px-8 sm:py-4 rounded-lg font-bold transition text-center text-sm sm:text-base">Layanan Kesehatan</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- View Points / Dots Indicators -->
-                <div v-if="heroSliders.length > 0" class="absolute bottom-6 left-0 right-0 flex justify-center gap-2 z-20">
-                    <button v-for="(slider, index) in heroSliders" :key="'dot-'+index" 
-                        @click="setSlide(index)"
-                        class="w-3 h-3 rounded-full transition-all duration-300 focus:outline-none"
-                        :class="index === currentSlide ? 'bg-red-600 w-8' : 'bg-white/50 hover:bg-white/80'">
-                    </button>
-                </div>
-            </section>
+            <HeroSection />
 
             <!-- Information UDD Section -->
             <section class="py-12 bg-gray-50">
