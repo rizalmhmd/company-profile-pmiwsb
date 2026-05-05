@@ -17,7 +17,7 @@ const props = defineProps({
 </script>
 
 <template>
-    <MainLayout title="Beranda" :can-login="canLogin" :footer="footer">
+    <MainLayout title="Beranda">
         <main>
             <!-- Hero Slider -->
             <HeroSection />

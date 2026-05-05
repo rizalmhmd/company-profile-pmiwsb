@@ -5,12 +5,11 @@ import { computed } from 'vue';
 import HeroSection from '@/Components/HeroSection.vue';
 
 const page = usePage();
-const footer = computed(() => page.props.footer);
 </script>
 
 <template>
     <Head title="Mengenal Produk Darah" />
-    <MainLayout :footer="footer">
+    <MainLayout>
         <HeroSection 
             title="Mengenal Produk Darah" 
             subtitle="Donor Darah" 

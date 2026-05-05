@@ -1,12 +1,14 @@
 <script setup>
-import { ref } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 
-defineProps({
+const props = defineProps({
     title: String,
-    canLogin: Boolean,
-    footer: Object,
 });
+
+const page = usePage();
+const canLogin = computed(() => page.props.canLogin);
+const footer = computed(() => page.props.footer);
 
 const isProfileOpen = ref(false);
 const isUnitDDOpen = ref(false);
@@ -130,14 +132,13 @@ const mobileHubungiKamiOpen = ref(false);
                     </div>
                 </nav>
                 <div class="flex items-center gap-4">
-                    <!-- Search & Login (Desktop) -->
+                    <!-- Search (Desktop) -->
                     <div class="hidden sm:flex items-center gap-4">
-                        <button class="p-2 text-gray-500 hover:text-red-600">
+                        <button class="p-2 text-gray-500 hover:text-red-600 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                         </button>
-                        <Link v-if="canLogin" href="/login/admin" class="text-sm font-bold text-gray-600 hover:text-red-600 transition">MASUK</Link>
                     </div>
 
                     <!-- Hamburger Button (Mobile) -->
@@ -151,102 +152,113 @@ const mobileHubungiKamiOpen = ref(false);
         </header>
 
         <!-- Mobile Sidebar -->
-        <div v-if="isMobileMenuOpen" class="fixed inset-0 z-[100] lg:hidden">
-            <!-- Backdrop -->
-            <div @click="isMobileMenuOpen = false" class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"></div>
-            
-            <!-- Sidebar Content -->
-            <div class="absolute right-0 top-0 bottom-0 w-80 bg-white shadow-2xl flex flex-col transform transition-transform duration-300">
-                <div class="p-6 border-b flex justify-between items-center">
-                    <div class="text-red-600">
-                        <svg class="h-10 w-10" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M19 11h-5V6h-4v5H5v4h5v5h4v-5h5v-4z" />
-                        </svg>
-                    </div>
-                    <button @click="isMobileMenuOpen = false" class="p-2 text-gray-500 hover:text-red-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
+        <transition name="fade">
+            <div v-if="isMobileMenuOpen" class="fixed inset-0 z-[100] lg:hidden">
+                <!-- Backdrop -->
+                <div @click="isMobileMenuOpen = false" class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
+                
+                <!-- Sidebar Content -->
+                <transition name="slide-mobile">
+                    <div v-if="isMobileMenuOpen" 
+                         class="absolute right-0 top-0 bottom-0 w-80 bg-white shadow-2xl flex flex-col z-[101]">
+                        <div class="p-6 border-b flex justify-between items-center">
+                            <div class="text-red-600">
+                                <svg class="h-10 w-10" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19 11h-5V6h-4v5H5v4h5v5h4v-5h5v-4z" />
+                                </svg>
+                            </div>
+                            <button @click="isMobileMenuOpen = false" class="p-2 text-gray-500 hover:text-red-600 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
 
-                <nav class="flex-1 overflow-y-auto p-6 space-y-4">
-                    <Link href="/" class="block text-lg font-bold text-red-600">BERANDA</Link>
-                    
-                    <!-- Profil Accordion -->
-                    <div class="space-y-2">
-                        <button @click="mobileProfilOpen = !mobileProfilOpen" class="w-full flex justify-between items-center text-lg font-bold text-gray-700">
-                            PROFIL
-                            <svg :class="{'rotate-180': mobileProfilOpen}" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                        </button>
-                        <div v-show="mobileProfilOpen" class="pl-4 space-y-3 border-l-2 border-red-100 mt-2">
-                            <Link href="/profil/visi-misi" class="block text-gray-600 hover:text-red-600">Visi Misi</Link>
-                            <Link href="/profil/struktur/markas" class="block text-gray-600 hover:text-red-600">Struktur Organisasi</Link>
-                            <Link href="/profil/7-prinsip" class="block text-gray-600 hover:text-red-600">7 Prinsip</Link>
-                            <Link href="/profil/sejarah" class="block text-gray-600 hover:text-red-600">Sejarah PMI</Link>
+                        <nav class="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+                            <Link href="/" class="block text-lg font-bold text-red-600" @click="isMobileMenuOpen = false">BERANDA</Link>
+                            
+                            <!-- Profil Accordion -->
+                            <div class="space-y-2">
+                                <button @click="mobileProfilOpen = !mobileProfilOpen" class="w-full flex justify-between items-center text-lg font-bold text-gray-700 hover:text-red-600 transition-colors">
+                                    PROFIL
+                                    <svg :class="{'rotate-180': mobileProfilOpen}" class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                                </button>
+                                <transition name="accordion">
+                                    <div v-show="mobileProfilOpen" class="pl-4 space-y-3 border-l-2 border-red-100 mt-2 overflow-hidden">
+                                        <Link href="/profil/visi-misi" class="block text-gray-600 hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">Visi Misi</Link>
+                                        <Link href="/profil/struktur/markas" class="block text-gray-600 hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">Struktur Organisasi</Link>
+                                        <Link href="/profil/7-prinsip" class="block text-gray-600 hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">7 Prinsip</Link>
+                                        <Link href="/profil/sejarah" class="block text-gray-600 hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">Sejarah PMI</Link>
+                                    </div>
+                                </transition>
+                            </div>
+
+                            <!-- Unit DD Accordion -->
+                            <div class="space-y-2">
+                                <button @click="mobileUnitDDOpen = !mobileUnitDDOpen" class="w-full flex justify-between items-center text-lg font-bold text-gray-700 uppercase hover:text-red-600 transition-colors">
+                                    UNIT DD
+                                    <svg :class="{'rotate-180': mobileUnitDDOpen}" class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                                </button>
+                                <transition name="accordion">
+                                    <div v-show="mobileUnitDDOpen" class="pl-4 space-y-3 border-l-2 border-red-100 mt-2 text-gray-600 overflow-hidden">
+                                        <Link href="/donor/info/stok" class="block hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">Stok Darah</Link>
+                                        <Link href="/donor/jadwal" class="block hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">Jadwal Donor/ Mobil Unit</Link>
+                                    </div>
+                                </transition>
+                            </div>
+
+                            <!-- Markas Accordion -->
+                            <div class="space-y-2">
+                                <button @click="mobileMarkisOpen = !mobileMarkisOpen" class="w-full flex justify-between items-center text-lg font-bold text-gray-700 uppercase hover:text-red-600 transition-colors">
+                                    MARKAS
+                                    <svg :class="{'rotate-180': mobileMarkisOpen}" class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                                </button>
+                                <transition name="accordion">
+                                    <div v-show="mobileMarkisOpen" class="pl-4 space-y-3 border-l-2 border-red-100 mt-2 text-gray-600 overflow-hidden">
+                                        <Link href="/markas/pertolongan-pertama" class="block hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">PPPK</Link>
+                                        <Link href="/markas/sibats" class="block hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">Ambulance</Link>
+                                    </div>
+                                </transition>
+                            </div>
+
+                            <!-- Klinik Accordion -->
+                            <div class="space-y-2">
+                                <button @click="mobileKlinikOpen = !mobileKlinikOpen" class="w-full flex justify-between items-center text-lg font-bold text-gray-700 uppercase hover:text-red-600 transition-colors">
+                                    KLINIK
+                                    <svg :class="{'rotate-180': mobileKlinikOpen}" class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                                </button>
+                                <transition name="accordion">
+                                    <div v-show="mobileKlinikOpen" class="pl-4 space-y-3 border-l-2 border-red-100 mt-2 text-gray-600 overflow-hidden">
+                                        <Link href="/profil/struktur/klinik" class="block hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">Waktu Pelayanan</Link>
+                                        <Link href="/donor/info/produk" class="block hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">Jenis Pelayanan</Link>
+                                        <Link href="/donor/registrasi" class="block hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">Jadwal Dokter Praktek</Link>
+                                    </div>
+                                </transition>
+                            </div>
+
+                            <Link href="/markas/berita" class="block text-lg font-bold text-gray-700 uppercase hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">BERITA</Link>
+
+                            <!-- Hubungi Kami Accordion -->
+                            <div class="space-y-2">
+                                <button @click="mobileHubungiKamiOpen = !mobileHubungiKamiOpen" class="w-full flex justify-between items-center text-lg font-bold text-gray-700 uppercase hover:text-red-600 transition-colors">
+                                    HUBUNGI KAMI
+                                    <svg :class="{'rotate-180': mobileHubungiKamiOpen}" class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                                </button>
+                                <transition name="accordion">
+                                    <div v-show="mobileHubungiKamiOpen" class="pl-4 space-y-3 border-l-2 border-red-100 mt-2 text-gray-600 overflow-hidden">
+                                        <a href="https://wa.me/6285742750060" target="_blank" class="block hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">Whatsapp</a>
+                                    </div>
+                                </transition>
+                            </div>
+                        </nav>
+
+                        <div class="p-6 border-t space-y-4 bg-gray-50/50 text-center">
+                            <span class="text-xs uppercase tracking-widest font-bold text-gray-500">PMI Wonosobo</span>
                         </div>
                     </div>
-
-                    <!-- Unit DD Accordion -->
-                    <div class="space-y-2">
-                        <button @click="mobileUnitDDOpen = !mobileUnitDDOpen" class="w-full flex justify-between items-center text-lg font-bold text-gray-700 uppercase">
-                            UNIT DD
-                            <svg :class="{'rotate-180': mobileUnitDDOpen}" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                        </button>
-                        <div v-show="mobileUnitDDOpen" class="pl-4 space-y-3 border-l-2 border-red-100 mt-2 text-gray-600">
-                            <Link href="/donor/info/stok" class="block">Stok Darah</Link>
-                            <Link href="/donor/jadwal" class="block">Jadwal Donor/ Mobil Unit</Link>
-                        </div>
-                    </div>
-
-                    <!-- Markas Accordion -->
-                    <div class="space-y-2">
-                        <button @click="mobileMarkisOpen = !mobileMarkisOpen" class="w-full flex justify-between items-center text-lg font-bold text-gray-700 uppercase">
-                            MARKAS
-                            <svg :class="{'rotate-180': mobileMarkisOpen}" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                        </button>
-                        <div v-show="mobileMarkisOpen" class="pl-4 space-y-3 border-l-2 border-red-100 mt-2 text-gray-600">
-                            <Link href="/markas/pertolongan-pertama" class="block">PPPK</Link>
-                            <Link href="/markas/sibats" class="block">Ambulance</Link>
-                        </div>
-                    </div>
-
-                    <!-- Klinik Accordion -->
-                    <div class="space-y-2">
-                        <button @click="mobileKlinikOpen = !mobileKlinikOpen" class="w-full flex justify-between items-center text-lg font-bold text-gray-700 uppercase">
-                            KLINIK
-                            <svg :class="{'rotate-180': mobileKlinikOpen}" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                        </button>
-                        <div v-show="mobileKlinikOpen" class="pl-4 space-y-3 border-l-2 border-red-100 mt-2 text-gray-600">
-                            <Link href="/profil/struktur/klinik" class="block">Waktu Pelayanan</Link>
-                            <Link href="/donor/info/produk" class="block">Jenis Pelayanan</Link>
-                            <Link href="/donor/registrasi" class="block">Jadwal Dokter Praktek</Link>
-                        </div>
-                    </div>
-
-                    <Link href="/markas/berita" class="block text-lg font-bold text-gray-700 uppercase">BERITA</Link>
-
-                    <!-- Hubungi Kami Accordion -->
-                    <div class="space-y-2">
-                        <button @click="mobileHubungiKamiOpen = !mobileHubungiKamiOpen" class="w-full flex justify-between items-center text-lg font-bold text-gray-700 uppercase">
-                            HUBUNGI KAMI
-                            <svg :class="{'rotate-180': mobileHubungiKamiOpen}" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                        </button>
-                        <div v-show="mobileHubungiKamiOpen" class="pl-4 space-y-3 border-l-2 border-red-100 mt-2 text-gray-600">
-                            <a href="https://wa.me/6285742750060" target="_blank" class="block">Whatsapp</a>
-                        </div>
-                    </div>
-                </nav>
-
-                <div class="p-6 border-t space-y-4">
-                    <Link v-if="canLogin" href="/login/admin" class="block w-full bg-red-600 text-white text-center py-3 rounded-xl font-bold transition">MASUK PANEL</Link>
-                    <div class="flex justify-center gap-6 text-gray-400">
-                        <!-- Social Icons -->
-                        <span class="text-xs uppercase tracking-widest font-bold">PMI Wonosobo</span>
-                    </div>
-                </div>
+                </transition>
             </div>
-        </div>
+        </transition>
 
         <slot />
 
@@ -339,14 +351,50 @@ const mobileHubungiKamiOpen = ref(false);
 </template>
 
 <style scoped>
-/* Transisi Smooth */
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 0.5s ease;
+/* Sidebar Transitions */
+.fade-enter-active, .fade-leave-active {
+    transition: opacity 0.4s ease;
+}
+.fade-enter-from, .fade-leave-to {
+    opacity: 0;
 }
 
-.v-enter-from,
-.v-leave-to {
+.slide-mobile-enter-active, .slide-mobile-leave-active {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.slide-mobile-enter-from {
+    transform: translateX(100%);
+}
+.slide-mobile-leave-to {
+    transform: translateX(100%);
+}
+
+/* Accordion Transitions */
+.accordion-enter-active, .accordion-leave-active {
+    transition: all 0.3s ease-in-out;
+    max-height: 200px;
+}
+.accordion-enter-from, .accordion-leave-to {
+    max-height: 0;
+    opacity: 0;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #ef4444;
+    border-radius: 10px;
+}
+
+/* Base Transitions */
+.v-enter-active, .v-leave-active {
+  transition: opacity 0.5s ease;
+}
+.v-enter-from, .v-leave-to {
   opacity: 0;
 }
 </style>

@@ -5,7 +5,6 @@ import { computed } from 'vue';
 import HeroSection from '@/Components/HeroSection.vue';
 
 const page = usePage();
-const footer = computed(() => page.props.footer);
 
 const missions = [
     {
@@ -56,7 +55,7 @@ const goals = [
 
 <template>
     <Head title="Visi & Misi" />
-    <MainLayout :footer="footer">
+    <MainLayout>
         <!-- Hero Section -->
         <HeroSection 
             title="Visi, Misi & Strategi" 
