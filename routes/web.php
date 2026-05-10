@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\BloodDonorController;
 use App\Http\Controllers\Admin\HeroSliderController;
 use App\Http\Controllers\Admin\FooterSettingController;
 use App\Http\Controllers\Admin\ServiceController;
+use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\UserController;
@@ -33,37 +34,7 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-// Dynamic Static Pages for Public UI
-Route::get('/{category}/{page?}/{subpage?}', function ($category, $page = null, $subpage = null) {
-    // Categories allowed
-    if (!in_array($category, ['profil', 'markas', 'donor'])) {
-        abort(404);
-    }
 
-    $folder = ucfirst($category);
-    $componentName = '';
-
-    if ($category === 'profil' && $page === 'struktur' && $subpage) {
-        $componentName = 'Struktur/' . ucfirst($subpage);
-    } elseif ($category === 'donor' && $page === 'info' && $subpage) {
-        $componentName = 'Info/' . ucfirst($subpage);
-    } elseif ($page) {
-        $componentName = str_replace('-', '', ucwords($page, '-'));
-    } else {
-        abort(404);
-    }
-
-    $component = $folder . '/' . $componentName;
-    if (file_exists(resource_path("js/Pages/{$component}.vue"))) {
-        return Inertia::render($component);
-    }
-    
-    abort(404);
-})->where([
-    'category' => '(profil|markas|donor)',
-    'page' => '[a-zA-Z0-9-]+',
-    'subpage' => '[a-zA-Z0-9-]+'
-]);
 
 // Auth Routes
 Route::get('/login/admin', [AuthController::class, 'showAdminLogin'])->name('login.admin')->middleware('guest');
@@ -135,6 +106,52 @@ Route::middleware('auth')->group(function () {
         // Pengaturan Footer
         Route::get('/footer-setting', [FooterSettingController::class, 'index'])->name('footer-setting.index');
         Route::post('/footer-setting', [FooterSettingController::class, 'upsert'])->name('footer-setting.upsert');
+
+        // Manajemen Halaman Statis
+        Route::get('/pages', [PageController::class, 'index'])->name('pages.index');
+        Route::get('/pages/{page}/edit', [PageController::class, 'edit'])->name('pages.edit');
+        Route::put('/pages/{page}', [PageController::class, 'update'])->name('pages.update');
     });
 });
+
+// Dynamic Static Pages for Public UI (Move to bottom to avoid hijacking other routes)
+Route::get('/{category}/{page?}/{subpage?}', function ($category, $page = null, $subpage = null) {
+    // Categories allowed
+    if (!in_array($category, ['profil', 'markas', 'donor'])) {
+        abort(404);
+    }
+
+    $folder = ucfirst($category);
+    $componentName = '';
+    $pageSlug = '';
+
+    if ($category === 'profil' && $page === 'struktur' && $subpage) {
+        $componentName = 'Struktur/' . ucfirst($subpage);
+        $pageSlug = 'struktur-' . $subpage;
+    } elseif ($category === 'donor' && $page === 'info' && $subpage) {
+        $componentName = 'Info/' . ucfirst($subpage);
+        $pageSlug = $subpage;
+    } elseif ($page) {
+        $componentName = str_replace('-', '', ucwords($page, '-'));
+        $pageSlug = $page;
+    } else {
+        abort(404);
+    }
+
+    $component = $folder . '/' . $componentName;
+    if (file_exists(resource_path("js/Pages/{$component}.vue"))) {
+        // Fetch dynamic content if exists
+        $pageData = \App\Models\Page::where('slug', $pageSlug)->first();
+        
+        return Inertia::render($component, [
+            'pageData' => $pageData
+        ]);
+    }
+    
+    abort(404);
+})->where([
+    'category' => '(profil|markas|donor)',
+    'page' => '[a-zA-Z0-9-]+',
+    'subpage' => '[a-zA-Z0-9-]+'
+]);
 

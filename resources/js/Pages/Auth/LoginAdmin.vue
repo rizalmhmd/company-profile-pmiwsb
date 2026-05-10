@@ -81,14 +81,7 @@ const submit = () => {
                 </Link>
             </div>
 
-            <!-- Info Box -->
-            <div class="rounded-lg bg-blue-50 p-4 border border-blue-200">
-                <p class="text-sm text-blue-800">
-                    <strong>Demo Akun:</strong><br>
-                    Email: admin@pmiwonosobo.or.id<br>
-                    Password: password
-                </p>
-            </div>
+
         </div>
     </div>
 </template>

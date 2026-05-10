@@ -1,37 +1,78 @@
 <script setup>
 import MainLayout from '@/Layouts/MainLayout.vue';
-import { Head, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { Head } from '@inertiajs/vue3';
 import HeroSection from '@/Components/HeroSection.vue';
-
-const page = usePage();
+const props = defineProps({
+    pageData: Object,
+});
 </script>
 
 <template>
-    <Head title="Mars & Hymne" />
+    <Head title="Mars & Hymne PMI" />
     <MainLayout>
+        <!-- Hero Section -->
         <HeroSection 
             title="Mars & Hymne" 
-            subtitle="Tentang Kami" 
-            description="Lagu kebanggaan dan semangat kemanusiaan Palang Merah Indonesia."
+            subtitle="Profil Kami" 
+            :description="pageData?.content?.hero_description || 'Lagu kebanggaan dan semangat kemanusiaan yang menjadi jiwa bagi setiap insan Palang Merah Indonesia.'"
         />
 
-        <div class="container mx-auto px-4 py-16 -mt-8 relative z-20">
-            <div class="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-gray-100 text-center max-w-3xl mx-auto backdrop-blur-sm bg-white/90">
-                <div class="inline-flex items-center justify-center w-20 h-20 bg-red-50 text-red-600 rounded-2xl mb-6 shadow-sm border border-red-100">
-                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+        <div class="container mx-auto px-4 py-16 -mt-10 relative z-20">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+                <!-- Mars PMI -->
+                <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-gray-100 flex flex-col">
+                    <div class="bg-red-50 p-8 border-b border-red-100 flex items-center justify-between">
+                        <div>
+                            <h2 class="text-3xl font-black text-red-600">{{ pageData?.content?.mars_title || 'MARS PMI' }}</h2>
+                            <p class="text-red-400 text-sm font-bold uppercase tracking-widest mt-1">Lagu Semangat</p>
+                        </div>
+                        <div class="w-14 h-14 bg-red-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-red-200">
+                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                        </div>
+                    </div>
+                    <div class="p-8 md:p-12 flex-1 flex flex-col justify-center">
+                        <div class="space-y-6 text-center italic text-gray-700 leading-relaxed text-lg whitespace-pre-line">
+                            {{ pageData?.content?.mars_content || "Palang Merah Indonesia\nSumber kasih umat manusia\nWarisan luhur, nusa dan bangsa\nWujud nyata pengabdiannya" }}
+                        </div>
+                    </div>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-800 mb-3">Konten Segera Hadir</h2>
-                <p class="text-gray-500 text-lg">
-                    Konten untuk halaman <span class="font-bold text-red-600">Mars & Hymne</span> sedang dipersiapkan oleh administrator. 
-                </p>
-                <div class="mt-8 pt-8 border-t border-gray-100">
-                    <a href="/" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-50 text-gray-700 rounded-xl font-medium hover:bg-gray-100 hover:text-red-600 transition-colors border border-gray-200">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                        Kembali ke Beranda
-                    </a>
+
+                <!-- Hymne PMI -->
+                <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-gray-100 flex flex-col">
+                    <div class="bg-blue-50 p-8 border-b border-blue-100 flex items-center justify-between">
+                        <div>
+                            <h2 class="text-3xl font-black text-blue-600">{{ pageData?.content?.hymne_title || 'HYMNE PMI' }}</h2>
+                            <p class="text-blue-400 text-sm font-bold uppercase tracking-widest mt-1">Lagu Pengabdian</p>
+                        </div>
+                        <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
+                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                        </div>
+                    </div>
+                    <div class="p-8 md:p-12 flex-1 flex flex-col justify-center">
+                        <div class="space-y-6 text-center italic text-gray-700 leading-relaxed text-lg whitespace-pre-line">
+                            {{ pageData?.content?.hymne_content || "Palang Merah Indonesia\nKebanggaan nusa dan bangsa\nSetia dalam tugasnya\nMelayani umat manusia" }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- YouTube/Player Placeholder -->
+            <div class="mt-16 bg-gray-50 rounded-3xl p-8 border border-gray-100 text-center max-w-2xl mx-auto">
+                <div class="w-16 h-16 bg-white rounded-full shadow-md flex items-center justify-center mx-auto mb-4 text-red-600">
+                    <svg class="w-8 h-8 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+                <h4 class="text-lg font-bold text-gray-800 mb-2">Dengarkan Audio</h4>
+                <p class="text-gray-500 text-sm mb-6">Fitur pemutar audio sedang dikembangkan untuk memudahkan Anda menghafal dan menyanyikan lagu kebanggaan PMI.</p>
+                <div class="h-2 bg-gray-200 rounded-full w-full overflow-hidden">
+                    <div class="h-full bg-red-600 w-1/3"></div>
                 </div>
             </div>
         </div>
     </MainLayout>
 </template>
+
+<style scoped>
+.container {
+    max-width: 1200px;
+}
+</style>

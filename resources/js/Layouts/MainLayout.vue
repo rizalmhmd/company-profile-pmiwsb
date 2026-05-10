@@ -39,9 +39,8 @@ const mobileHubungiKamiOpen = ref(false);
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-lg sm:text-xl font-bold text-red-600 leading-none">PALANG MERAH</h1>
-                        <p class="text-[10px] sm:text-sm font-semibold tracking-widest text-gray-600">INDONESIA</p>
-                        <p class="text-[8px] sm:text-xs text-gray-500 uppercase">Kabupaten Wonosobo</p>
+                        <h1 class="text-lg sm:text-xl font-bold text-red-600 leading-none uppercase">PALANG MERAH INDONESIA</h1>
+                        <p class="text-[8px] sm:text-xs text-gray-500 uppercase mt-1">Kabupaten Wonosobo</p>
                     </div>
                 </div>
                 <nav class="hidden lg:flex items-center gap-6 font-semibold text-gray-700 text-sm">
@@ -68,7 +67,7 @@ const mobileHubungiKamiOpen = ref(false);
                     <!-- Dropdown Unit DD -->
                     <div class="relative group" @mouseenter="isUnitDDOpen = true" @mouseleave="isUnitDDOpen = false">
                         <button class="hover:text-red-600 transition flex items-center gap-1 py-2 uppercase">
-                            UNIT DD
+                            UNIT DONOR DARAH
                             <svg class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
@@ -93,7 +92,7 @@ const mobileHubungiKamiOpen = ref(false);
                         <div v-show="isMarkisOpen" 
                              class="absolute left-0 mt-0 w-64 bg-white shadow-2xl rounded-xl border border-gray-100 py-4 z-[100] transform transition-all duration-300">
                             <Link href="/markas/pertolongan-pertama" class="block px-6 py-3 text-sm hover:bg-red-50 hover:text-red-600 transition">PPPK</Link>
-                            <Link href="/markas/sibats" class="block px-6 py-3 text-sm hover:bg-red-50 hover:text-red-600 transition">Ambulance</Link>
+                            <Link href="/markas/sibats" class="block px-6 py-3 text-sm hover:bg-red-50 hover:text-red-600 transition">Layanan Ambulance</Link>
                         </div>
                     </div>
 
