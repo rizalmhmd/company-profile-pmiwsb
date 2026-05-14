@@ -17,11 +17,7 @@ class PostController extends Controller
         return Inertia::render('Admin/Post/Index', [
             'posts' => Post::with('category')
                 ->orderBy('created_at', 'desc')
-                ->paginate(15)
-                ->through(function ($p) {
-                    $p->image_url = $p->image ? Storage::url($p->image) : null;
-                    return $p;
-                }),
+                ->paginate(15),
         ]);
     }
 
@@ -58,7 +54,6 @@ class PostController extends Controller
 
     public function edit(Post $post)
     {
-        $post->image_url = $post->image ? Storage::url($post->image) : null;
         return Inertia::render('Admin/Post/Form', [
             'post'       => $post,
             'categories' => Category::orderBy('name')->get(),

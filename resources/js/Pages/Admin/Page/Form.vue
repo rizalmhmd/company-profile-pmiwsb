@@ -11,6 +11,7 @@ const form = useForm({
     title: props.page.title,
     content: props.page.content || {},
     image: null,
+    remove_image: false,
     _method: 'PUT',
 });
 
@@ -29,8 +30,15 @@ const onImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
         form.image = file;
+        form.remove_image = false;
         imagePreview.value = URL.createObjectURL(file);
     }
+};
+
+const removeImage = () => {
+    form.image = null;
+    form.remove_image = true;
+    imagePreview.value = null;
 };
 
 const submit = () => {
@@ -64,7 +72,10 @@ const submit = () => {
                         </div>
 
                         <div>
-                            <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Gambar Banner (Opsional)</label>
+                            <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 flex justify-between items-center">
+                                <span>Gambar Banner (Opsional)</span>
+                                <button v-if="imagePreview" type="button" @click="removeImage" class="text-red-600 hover:text-red-700 font-bold transition">Hapus</button>
+                            </label>
                             <div class="relative group">
                                 <div class="w-full h-48 bg-gray-100 rounded-[2rem] overflow-hidden border-2 border-dashed border-gray-200 flex items-center justify-center transition group-hover:border-red-300">
                                     <img v-if="imagePreview" :src="imagePreview" class="w-full h-full object-cover">

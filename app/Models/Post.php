@@ -19,6 +19,13 @@ class Post extends Model
         'is_published',
     ];
 
+    protected $appends = ['image_url'];
+
+    public function getImageUrlAttribute()
+    {
+        return $this->image ? asset('storage/' . $this->image) : null;
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);

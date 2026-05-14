@@ -33,15 +33,24 @@ const mobileHubungiKamiOpen = ref(false);
         <header class="bg-white shadow-sm sticky top-0 z-50">
             <div class="container mx-auto px-4 py-3 flex justify-between items-center">
                 <div class="flex items-center gap-2 sm:gap-4">
-                    <div class="text-red-600">
-                        <svg class="h-10 w-10 sm:h-12 sm:w-12 transition-all" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M19 11h-5V6h-4v5H5v4h5v5h4v-5h5v-4z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h1 class="text-lg sm:text-xl font-bold text-red-600 leading-none uppercase">PALANG MERAH INDONESIA</h1>
-                        <p class="text-[8px] sm:text-xs text-gray-500 uppercase mt-1">Kabupaten Wonosobo</p>
-                    </div>
+                    <Link href="/" class="flex items-center gap-2 sm:gap-4 group">
+                        <div class="text-red-600">
+                            <img v-if="$page.props.siteSetting?.logo_url" :src="$page.props.siteSetting.logo_url" class="h-10 w-10 sm:h-12 sm:w-12 object-contain transition-transform group-hover:scale-105" alt="Logo">
+                            <svg v-else class="h-10 w-10 sm:h-12 sm:w-12 transition-all" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 11h-5V6h-4v5H5v4h5v5h4v-5h5v-4z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-lg sm:text-xl font-bold text-red-600 leading-none uppercase">
+                                {{ $page.props.siteSetting?.site_name?.split(' ')[0] || 'PALANG' }} 
+                                <span class="hidden sm:inline">{{ $page.props.siteSetting?.site_name?.split(' ').slice(1, 3).join(' ') || 'MERAH INDONESIA' }}</span>
+                                <span class="sm:hidden">{{ $page.props.siteSetting?.site_name?.split(' ').slice(1, 2).join(' ') || 'MERAH' }}</span>
+                            </h1>
+                            <p class="text-[8px] sm:text-xs text-gray-500 uppercase mt-1">
+                                {{ $page.props.siteSetting?.site_name?.split(' ').slice(3).join(' ') || 'Kabupaten Wonosobo' }}
+                            </p>
+                        </div>
+                    </Link>
                 </div>
                 <nav class="hidden lg:flex items-center gap-6 font-semibold text-gray-700 text-sm">
                     <Link href="/" class="hover:text-red-600 transition" :class="{'text-red-600 border-b-2 border-red-600 pb-1': $page.url === '/'}">BERANDA</Link>
@@ -269,13 +278,14 @@ const mobileHubungiKamiOpen = ref(false);
                     <div class="space-y-6">
                         <div class="flex items-center gap-3">
                             <div class="text-white">
-                                <svg class="h-12 w-12" viewBox="0 0 24 24" fill="currentColor">
+                                <img v-if="$page.props.siteSetting?.logo_url" :src="$page.props.siteSetting.logo_url" class="h-12 w-12 object-contain" alt="Logo">
+                                <svg v-else class="h-12 w-12" viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M19 11h-5V6h-4v5H5v4h5v5h4v-5h5v-4z" />
                                 </svg>
                             </div>
                             <div>
-                                <h4 class="text-lg font-bold leading-none text-red-500">PMI</h4>
-                                <p class="text-xs tracking-widest text-gray-400">WONOSOBO</p>
+                                <h4 class="text-lg font-bold leading-none text-red-500">{{ $page.props.siteSetting?.site_name?.split(' ').slice(0, 2).join(' ') || 'PMI' }}</h4>
+                                <p class="text-xs tracking-widest text-gray-400 mt-1">{{ $page.props.siteSetting?.site_name?.split(' ').slice(2).join(' ') || 'WONOSOBO' }}</p>
                             </div>
                         </div>
                         <p class="text-sm text-gray-400 leading-relaxed">

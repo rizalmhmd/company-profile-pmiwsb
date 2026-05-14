@@ -41,6 +41,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'footer' => fn () => FooterSetting::first(),
+            'siteSetting' => fn () => \App\Models\SiteSetting::first(),
             'heroSliders' => fn () => \App\Models\HeroSlider::where('is_active', true)->orderBy('order', 'asc')->get(),
             'canLogin' => \Illuminate\Support\Facades\Route::has('login.admin'),
             'flash' => [

@@ -14,10 +14,7 @@ class ServiceController extends Controller
     public function index()
     {
         return Inertia::render('Admin/Service/Index', [
-            'services' => Service::orderBy('title')->get()->map(function ($s) {
-                $s->image_url = $s->image ? Storage::url($s->image) : null;
-                return $s;
-            }),
+            'services' => Service::orderBy('title')->get(),
         ]);
     }
 
@@ -25,7 +22,7 @@ class ServiceController extends Controller
     {
         return Inertia::render('Admin/Service/Form');
     }
-
+    
     public function store(Request $request)
     {
         $request->validate([
@@ -50,7 +47,6 @@ class ServiceController extends Controller
 
     public function edit(Service $service)
     {
-        $service->image_url = $service->image ? Storage::url($service->image) : null;
         return Inertia::render('Admin/Service/Form', [
             'service' => $service,
         ]);

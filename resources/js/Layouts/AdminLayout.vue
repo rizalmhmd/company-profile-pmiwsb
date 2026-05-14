@@ -7,8 +7,11 @@ const page = usePage();
 const user = computed(() => page.props.auth.user);
 const flash = computed(() => page.props.flash);
 
-const isSidebarOpen = ref(true);
-const toggleSidebar = () => isSidebarOpen.value = !isSidebarOpen.value;
+const isSidebarOpen = ref(false);
+
+const toggleSidebar = () => {
+    isSidebarOpen.value = !isSidebarOpen.value;
+};
 
 const logout = () => router.post('/logout');
 
@@ -29,6 +32,7 @@ const navItems = [
     { header: 'Pengaturan' },
     { label: 'Konten Halaman', href: '/manage/pages', icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' },
     { label: 'Background/Slider', href: '/manage/hero-sliders', icon: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z' },
+    { label: 'Branding Situs', href: '/manage/site-setting', icon: 'M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z' },
     { label: 'Footer & Kontak', href: '/manage/footer-setting', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z' },
     { label: 'Manajemen User', href: '/manage/users', icon: 'M12 4.354a4 4 0 110 8.048M7 10.5h10M3 19c0-2 2-4 9-4s9 2 9 4' },
 ];
@@ -48,13 +52,14 @@ const isActive = (href) => page.url.startsWith(href) && href !== '/dashboard/adm
 
             <!-- Logo -->
             <div class="flex items-center gap-3 px-4 py-5 border-b border-gray-700">
-                <div class="w-9 h-9 bg-red-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <div class="w-9 h-9 bg-red-600 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <img v-if="$page.props.siteSetting?.logo_url" :src="$page.props.siteSetting.logo_url" class="w-full h-full object-contain p-1">
+                    <svg v-else class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M19 11h-5V6h-4v5H5v4h5v5h4v-5h5v-4z"/>
                     </svg>
                 </div>
                 <div v-show="isSidebarOpen" class="overflow-hidden">
-                    <p class="font-bold text-sm leading-tight text-white whitespace-nowrap">PMI Wonosobo</p>
+                    <p class="font-bold text-sm leading-tight text-white whitespace-nowrap">{{ $page.props.siteSetting?.site_name || 'PMI Wonosobo' }}</p>
                     <p class="text-xs text-gray-400 whitespace-nowrap">Admin Panel</p>
                 </div>
             </div>
@@ -70,7 +75,7 @@ const isActive = (href) => page.url.startsWith(href) && href !== '/dashboard/adm
                     <div v-else-if="item.header" class="h-px bg-gray-800 mx-4 my-2 opacity-50"></div>
 
                     <!-- Link -->
-                    <a v-else :href="item.href"
+                    <Link v-else :href="item.href"
                         :class="[
                             isActive(item.href)
                                 ? 'bg-red-600 text-white shadow-lg shadow-red-600/20'
@@ -81,7 +86,7 @@ const isActive = (href) => page.url.startsWith(href) && href !== '/dashboard/adm
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="item.icon"/>
                         </svg>
                         <span v-show="isSidebarOpen" class="text-sm font-medium whitespace-nowrap truncate">{{ item.label }}</span>
-                    </a>
+                    </Link>
                 </template>
             </nav>
 

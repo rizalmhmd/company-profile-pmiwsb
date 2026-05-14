@@ -12,10 +12,17 @@ const props = defineProps({
     <MainLayout>
         <!-- Hero Section -->
         <HeroSection 
-            title="Mars & Hymne" 
+            :title="pageData?.title || 'Mars & Hymne'" 
             subtitle="Profil Kami" 
             :description="pageData?.content?.hero_description || 'Lagu kebanggaan dan semangat kemanusiaan yang menjadi jiwa bagi setiap insan Palang Merah Indonesia.'"
         />
+        
+        <!-- Featured Image Section -->
+        <div v-if="pageData?.image_url" class="container mx-auto px-4 -mt-20 relative z-30 mb-16">
+            <div class="max-w-5xl mx-auto rounded-[3rem] overflow-hidden shadow-2xl border-8 border-white">
+                <img :src="pageData.image_url" class="w-full h-[300px] sm:h-[500px] object-cover" alt="Featured Image">
+            </div>
+        </div>
 
         <div class="container mx-auto px-4 py-16 -mt-10 relative z-20">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">

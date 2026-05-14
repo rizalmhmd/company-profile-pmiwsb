@@ -36,10 +36,17 @@ const products = computed(() => {
     <MainLayout>
         <!-- Hero Section -->
         <HeroSection 
-            title="Produk Darah" 
-            subtitle="Unit Donor Darah" 
-            :description="pageData?.content || 'Mengenal berbagai jenis produk darah hasil olahan Unit Donor Darah (UDD) PMI untuk kebutuhan medis pasien.'"
+            :title="pageData?.title || 'Produk Darah'" 
+            subtitle="Informasi Donor" 
+            :description="pageData?.content?.hero_description || 'Mengenal berbagai jenis komponen darah dan manfaatnya bagi kesehatan serta pengobatan.'"
         />
+
+        <!-- Featured Image Section -->
+        <div v-if="pageData?.image_url" class="container mx-auto px-4 -mt-20 relative z-30 mb-8">
+            <div class="max-w-5xl mx-auto rounded-[3rem] overflow-hidden shadow-2xl border-8 border-white">
+                <img :src="pageData.image_url" class="w-full h-[300px] sm:h-[450px] object-cover" alt="Featured Image">
+            </div>
+        </div>
 
         <div class="container mx-auto px-4 py-16 -mt-10 relative z-20">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">

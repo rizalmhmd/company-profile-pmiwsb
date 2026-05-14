@@ -13,10 +13,7 @@ class HeroSliderController extends Controller
     public function index()
     {
         return Inertia::render('Admin/HeroSlider/Index', [
-            'sliders' => HeroSlider::orderBy('order')->get()->map(function ($s) {
-                $s->image_url = $s->image_path ? Storage::url($s->image_path) : null;
-                return $s;
-            }),
+            'sliders' => HeroSlider::orderBy('order')->get(),
         ]);
     }
 
@@ -53,7 +50,6 @@ class HeroSliderController extends Controller
 
     public function edit(HeroSlider $heroSlider)
     {
-        $heroSlider->image_url = $heroSlider->image_path ? Storage::url($heroSlider->image_path) : null;
         return Inertia::render('Admin/HeroSlider/Form', [
             'slider' => $heroSlider,
         ]);

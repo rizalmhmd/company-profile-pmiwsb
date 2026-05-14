@@ -4,17 +4,26 @@ import { Head, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import HeroSection from '@/Components/HeroSection.vue';
 
-const page = usePage();
+const props = defineProps({
+    pageData: Object,
+});
 </script>
 
 <template>
     <Head title="Dewan Kehormatan & Pengurus" />
     <MainLayout>
         <HeroSection 
-            title="Dewan Kehormatan & Pengurus" 
-            subtitle="Struktur Organisasi" 
-            description="Jajaran Dewan Kehormatan dan Pengurus Palang Merah Indonesia Kabupaten Wonosobo masa bakti 2021-2026."
+            :title="pageData?.title || 'Dewan Kehormatan & Pengurus'" 
+            subtitle="Profil Kami" 
+            :description="pageData?.content?.hero_description || 'Susunan Dewan Kehormatan dan Pengurus Palang Merah Indonesia Kabupaten Wonosobo masa bakti berjalan.'"
         />
+
+        <!-- Featured Image Section -->
+        <div v-if="pageData?.image_url" class="container mx-auto px-4 -mt-20 relative z-30 mb-8">
+            <div class="max-w-5xl mx-auto rounded-[3rem] overflow-hidden shadow-2xl border-8 border-white">
+                <img :src="pageData.image_url" class="w-full h-[300px] sm:h-[450px] object-cover" alt="Featured Image">
+            </div>
+        </div>
 
         <div class="container mx-auto px-4 py-16 -mt-8 relative z-20">
             <div class="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-gray-100 text-center max-w-3xl mx-auto backdrop-blur-sm bg-white/90">

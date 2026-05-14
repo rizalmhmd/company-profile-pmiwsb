@@ -13,16 +13,12 @@ class PageController extends Controller
     public function index()
     {
         return Inertia::render('Admin/Page/Index', [
-            'pages' => Page::orderBy('category')->orderBy('title')->get()->map(function ($p) {
-                $p->image_url = $p->image ? Storage::url($p->image) : null;
-                return $p;
-            }),
+            'pages' => Page::orderBy('category')->orderBy('title')->get(),
         ]);
     }
 
     public function edit(Page $page)
     {
-        $page->image_url = $page->image ? Storage::url($page->image) : null;
         return Inertia::render('Admin/Page/Form', [
             'page' => $page,
         ]);
@@ -43,6 +39,11 @@ class PageController extends Controller
                 Storage::disk('public')->delete($page->image);
             }
             $data['image'] = $request->file('image')->store('pages', 'public');
+        } elseif ($request->boolean('remove_image')) {
+            if ($page->image) {
+                Storage::disk('public')->delete($page->image);
+            }
+            $data['image'] = null;
         }
 
         $page->update($data);

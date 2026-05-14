@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\SiteSettingController;
 
 Route::get('/', function () {
     return Inertia::render('Home', [
@@ -27,10 +28,12 @@ Route::get('/', function () {
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
-        'bloodStocks' => BloodStock::all(),
-        'mobileUnits' => BloodDonor::orderBy('date', 'asc')->get(),
-        'footer' => FooterSetting::first(),
-        'heroSliders' => HeroSlider::where('is_active', true)->orderBy('order', 'asc')->get(),
+        'bloodStocks' => \App\Models\BloodStock::all(),
+        'mobileUnits' => \App\Models\BloodDonor::orderBy('date', 'asc')->get(),
+        'footer' => \App\Models\FooterSetting::first(),
+        'heroSliders' => \App\Models\HeroSlider::where('is_active', true)->orderBy('order', 'asc')->get(),
+        'services' => \App\Models\Service::orderBy('title')->get(),
+        'latestPosts' => \App\Models\Post::with('category')->where('is_published', true)->latest()->take(3)->get(),
     ]);
 })->name('home');
 
@@ -107,6 +110,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/footer-setting', [FooterSettingController::class, 'index'])->name('footer-setting.index');
         Route::post('/footer-setting', [FooterSettingController::class, 'upsert'])->name('footer-setting.upsert');
 
+        // Pengaturan Situs (Logo & Favicon)
+        Route::get('/site-setting', [SiteSettingController::class, 'index'])->name('site-setting.index');
+        Route::post('/site-setting', [SiteSettingController::class, 'update'])->name('site-setting.update');
+
         // Manajemen Halaman Statis
         Route::get('/pages', [PageController::class, 'index'])->name('pages.index');
         Route::get('/pages/{page}/edit', [PageController::class, 'edit'])->name('pages.edit');
@@ -114,9 +121,8 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-// Dynamic Static Pages for Public UI (Move to bottom to avoid hijacking other routes)
+// Dynamic Static Pages for Public UI
 Route::get('/{category}/{page?}/{subpage?}', function ($category, $page = null, $subpage = null) {
-    // Categories allowed
     if (!in_array($category, ['profil', 'markas', 'donor'])) {
         abort(404);
     }
@@ -132,22 +138,63 @@ Route::get('/{category}/{page?}/{subpage?}', function ($category, $page = null, 
         $componentName = 'Info/' . ucfirst($subpage);
         $pageSlug = $subpage;
     } elseif ($page) {
-        $componentName = str_replace('-', '', ucwords($page, '-'));
+        // Special mappings for services to static pages
+        $mappings = [
+            'layanan-ambulance' => 'Sibats',
+            'ambulance' => 'Sibats',
+            'ambulans' => 'Sibats',
+            'layanan-ambulans' => 'Sibats',
+            'pertolongan-pertama' => 'PertolonganPertama',
+        ];
+
+        if (isset($mappings[$page])) {
+            $componentName = $mappings[$page];
+        } else {
+            $componentName = str_replace('-', '', ucwords($page, '-'));
+        }
         $pageSlug = $page;
     } else {
         abort(404);
     }
 
     $component = $folder . '/' . $componentName;
+
+    // Special Case: News/Berita Details
+    if ($category === 'markas' && $page === 'berita' && $subpage) {
+        $post = \App\Models\Post::with('category')->where('slug', $subpage)->first();
+        if ($post) {
+            return Inertia::render('Markas/PostShow', [
+                'post' => $post,
+                'relatedPosts' => \App\Models\Post::where('id', '!=', $post->id)->where('is_published', true)->latest()->take(5)->get(),
+            ]);
+        }
+    }
+
+    // Special Case: News/Berita List
+    if ($category === 'markas' && $page === 'berita' && !$subpage) {
+        return Inertia::render('Markas/Berita', [
+            'posts' => \App\Models\Post::with('category')->where('is_published', true)->latest()->paginate(12),
+        ]);
+    }
+    
+    // 1. Try to find the specific Vue component
     if (file_exists(resource_path("js/Pages/{$component}.vue"))) {
-        // Fetch dynamic content if exists
         $pageData = \App\Models\Page::where('slug', $pageSlug)->first();
-        
         return Inertia::render($component, [
             'pageData' => $pageData
         ]);
     }
     
+    // 2. Fallback for Services in Markas category
+    if ($category === 'markas' && $page) {
+        $service = \App\Models\Service::where('slug', $page)->first();
+        if ($service) {
+            return Inertia::render('Markas/ServiceShow', [
+                'service' => $service
+            ]);
+        }
+    }
+
     abort(404);
 })->where([
     'category' => '(profil|markas|donor)',

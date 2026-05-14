@@ -11,4 +11,11 @@ class Page extends Model
     protected $casts = [
         'content' => 'array',
     ];
+
+    protected $appends = ['image_url'];
+
+    public function getImageUrlAttribute()
+    {
+        return $this->image ? asset('storage/' . $this->image) : null;
+    }
 }
