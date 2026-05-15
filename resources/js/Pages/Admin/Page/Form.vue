@@ -48,7 +48,7 @@ const submit = () => {
 
 <template>
     <AdminLayout :title="'Edit ' + page.title">
-        <div class="max-w-4xl">
+        <div class="max-w-6xl mx-auto">
             <form @submit.prevent="submit" class="space-y-6">
                 <!-- Header Card -->
                 <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-200">

@@ -44,6 +44,7 @@ class HandleInertiaRequests extends Middleware
             'siteSetting' => fn () => \App\Models\SiteSetting::first(),
             'heroSliders' => fn () => \App\Models\HeroSlider::where('is_active', true)->orderBy('order', 'asc')->get(),
             'canLogin' => \Illuminate\Support\Facades\Route::has('login.admin'),
+            'menus' => fn () => \App\Models\Menu::with('children')->active()->main()->get(),
             'flash' => [
                 'message' => fn () => $request->session()->get('message'),
                 'error' => fn () => $request->session()->get('error'),

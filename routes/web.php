@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\SiteSettingController;
+use App\Http\Controllers\Admin\MenuController;
 
 Route::get('/', function () {
     return Inertia::render('Home', [
@@ -106,11 +107,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
-        // Pengaturan Footer
-        Route::get('/footer-setting', [FooterSettingController::class, 'index'])->name('footer-setting.index');
-        Route::post('/footer-setting', [FooterSettingController::class, 'upsert'])->name('footer-setting.upsert');
-
-        // Pengaturan Situs (Logo & Favicon)
+        // Pengaturan Situs (Branding, Footer, Kontak)
         Route::get('/site-setting', [SiteSettingController::class, 'index'])->name('site-setting.index');
         Route::post('/site-setting', [SiteSettingController::class, 'update'])->name('site-setting.update');
 
@@ -118,6 +115,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/pages', [PageController::class, 'index'])->name('pages.index');
         Route::get('/pages/{page}/edit', [PageController::class, 'edit'])->name('pages.edit');
         Route::put('/pages/{page}', [PageController::class, 'update'])->name('pages.update');
+
+        // Manajemen Navbar (Menu)
+        Route::resource('menus', MenuController::class)->names([
+            'index'   => 'menus.index',
+            'create'  => 'menus.create',
+            'store'   => 'menus.store',
+            'edit'    => 'menus.edit',
+            'update'  => 'menus.update',
+            'destroy' => 'menus.destroy',
+        ]);
     });
 });
 

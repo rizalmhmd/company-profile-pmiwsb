@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\SiteSetting;
+use App\Models\FooterSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -12,42 +13,55 @@ class SiteSettingController extends Controller
 {
     public function index()
     {
-        $setting = SiteSetting::first() ?? new SiteSetting();
         return Inertia::render('Admin/SiteSetting/Index', [
-            'setting' => $setting
+            'site' => SiteSetting::first() ?? new SiteSetting(),
+            'footer' => FooterSetting::first() ?? new FooterSetting(),
         ]);
     }
 
     public function update(Request $request)
     {
-        $setting = SiteSetting::first() ?? new SiteSetting();
+        $site = SiteSetting::first() ?? new SiteSetting();
+        $footer = FooterSetting::first() ?? new FooterSetting();
 
         $request->validate([
+            // Branding
             'site_name' => 'required|string|max:255',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
             'favicon' => 'nullable|image|mimes:ico,png,jpg,jpeg,svg,webp|max:1024',
+            // Footer & Contact
+            'about_pmi' => 'nullable|string',
+            'address'   => 'nullable|string|max:500',
+            'phone'     => 'nullable|string|max:30',
+            'email'     => 'nullable|email|max:255',
+            'facebook'  => 'nullable|url|max:255',
+            'instagram' => 'nullable|url|max:255',
+            'copyright' => 'nullable|string|max:255',
         ]);
 
-        $data = $request->only(['site_name']);
-
+        // Handle Branding
+        $siteData = $request->only(['site_name']);
         if ($request->hasFile('logo')) {
-            if ($setting->logo) {
-                Storage::disk('public')->delete($setting->logo);
-            }
-            $data['logo'] = $request->file('logo')->store('settings', 'public');
+            if ($site->logo) Storage::disk('public')->delete($site->logo);
+            $siteData['logo'] = $request->file('logo')->store('settings', 'public');
         }
-
         if ($request->hasFile('favicon')) {
-            if ($setting->favicon) {
-                Storage::disk('public')->delete($setting->favicon);
-            }
-            $data['favicon'] = $request->file('favicon')->store('settings', 'public');
+            if ($site->favicon) Storage::disk('public')->delete($site->favicon);
+            $siteData['favicon'] = $request->file('favicon')->store('settings', 'public');
+        }
+        
+        if ($site->exists) {
+            $site->update($siteData);
+        } else {
+            SiteSetting::create($siteData);
         }
 
-        if ($setting->exists) {
-            $setting->update($data);
+        // Handle Footer & Contact
+        $footerData = $request->only(['about_pmi', 'address', 'phone', 'email', 'facebook', 'instagram', 'copyright']);
+        if ($footer->exists) {
+            $footer->update($footerData);
         } else {
-            SiteSetting::create($data);
+            FooterSetting::create($footerData);
         }
 
         return redirect()->back()->with('success', 'Pengaturan situs berhasil diperbarui.');

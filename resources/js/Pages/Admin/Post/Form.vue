@@ -28,7 +28,7 @@ const submit = () => {
 
 <template>
     <AdminLayout :title="isEdit ? 'Edit Berita' : 'Tambah Berita'">
-        <div class="max-w-3xl mx-auto">
+        <div class="max-w-5xl mx-auto">
             <div class="mb-6">
                 <a href="/manage/posts"
                     class="flex items-center gap-2 text-sm text-gray-500 hover:text-red-600 transition w-fit">

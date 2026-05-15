@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\BloodDonor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class BloodDonorController extends Controller
@@ -31,7 +32,10 @@ class BloodDonorController extends Controller
             'time_end'   => 'required',
         ]);
 
-        BloodDonor::create($request->all());
+        $data = $request->only(['name', 'location', 'date', 'time_start', 'time_end']);
+        $data['slug'] = Str::slug($request->name);
+
+        BloodDonor::create($data);
 
         return redirect()->route('admin.blood-donors.index')
             ->with('success', 'Data donor berhasil ditambahkan.');
@@ -54,7 +58,10 @@ class BloodDonorController extends Controller
             'time_end'   => 'required',
         ]);
 
-        $bloodDonor->update($request->all());
+        $data = $request->only(['name', 'location', 'date', 'time_start', 'time_end']);
+        $data['slug'] = Str::slug($request->name);
+
+        $bloodDonor->update($data);
 
         return redirect()->route('admin.blood-donors.index')
             ->with('success', 'Data donor berhasil diperbarui.');

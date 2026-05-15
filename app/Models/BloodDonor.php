@@ -10,6 +10,8 @@ class BloodDonor extends Model
     use HasFactory;
 
     protected $fillable = [
+        'name',
+        'slug',
         'location',
         'date',
         'time_start',

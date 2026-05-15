@@ -9,20 +9,18 @@ const props = defineProps({
 const page = usePage();
 const canLogin = computed(() => page.props.canLogin);
 const footer = computed(() => page.props.footer);
+const menus = computed(() => page.props.menus || []);
 
-const isProfileOpen = ref(false);
-const isUnitDDOpen = ref(false);
-const isMarkisOpen = ref(false);
-const isKlinikOpen = ref(false);
-const isHubungiKamiOpen = ref(false);
+// Unified Dropdown State for Desktop
+const openDropdown = ref(null);
 
 // Mobile States
 const isMobileMenuOpen = ref(false);
-const mobileProfilOpen = ref(false);
-const mobileUnitDDOpen = ref(false);
-const mobileMarkisOpen = ref(false);
-const mobileKlinikOpen = ref(false);
-const mobileHubungiKamiOpen = ref(false);
+const openMobileAccordion = ref(null);
+
+const toggleMobileAccordion = (id) => {
+    openMobileAccordion.value = openMobileAccordion.value === id ? null : id;
+};
 </script>
 
 <template>
@@ -53,91 +51,41 @@ const mobileHubungiKamiOpen = ref(false);
                     </Link>
                 </div>
                 <nav class="hidden lg:flex items-center gap-6 font-semibold text-gray-700 text-sm">
-                    <Link href="/" class="hover:text-red-600 transition" :class="{'text-red-600 border-b-2 border-red-600 pb-1': $page.url === '/'}">BERANDA</Link>
-                    
-                    <!-- Dropdown Profil -->
-                    <div class="relative group" @mouseenter="isProfileOpen = true" @mouseleave="isProfileOpen = false">
-                        <button class="hover:text-red-600 transition flex items-center gap-1 py-2">
-                            PROFIL
-                            <svg class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-                        
-                        <div v-show="isProfileOpen" 
-                             class="absolute left-0 mt-0 w-64 bg-white shadow-2xl rounded-xl border border-gray-100 py-4 z-[100] transform transition-all duration-300">
-                            <Link href="/profil/visi-misi" class="block px-6 py-3 text-sm hover:bg-red-50 hover:text-red-600 transition">Visi Misi</Link>
-                            <Link href="/profil/struktur/markas" class="block px-6 py-3 text-sm hover:bg-red-50 hover:text-red-600 transition">Struktur Organisasi</Link>
-                            <Link href="/profil/7-prinsip" class="block px-6 py-3 text-sm hover:bg-red-50 hover:text-red-600 transition">7 Prinsip</Link>
-                            <Link href="/profil/sejarah" class="block px-6 py-3 text-sm hover:bg-red-50 hover:text-red-600 transition">Sejarah PMI</Link>
-                        </div>
-                    </div>
+                    <template v-for="menu in menus" :key="menu.id">
+                        <!-- Simple Link -->
+                        <Link v-if="!menu.children || menu.children.length === 0" 
+                              :href="menu.url || '#'" 
+                              class="hover:text-red-600 transition" 
+                              :class="{'text-red-600 border-b-2 border-red-600 pb-1': $page.url === menu.url}">
+                            {{ menu.name }}
+                        </Link>
 
-                    <!-- Dropdown Unit DD -->
-                    <div class="relative group" @mouseenter="isUnitDDOpen = true" @mouseleave="isUnitDDOpen = false">
-                        <button class="hover:text-red-600 transition flex items-center gap-1 py-2 uppercase">
-                            UNIT DONOR DARAH
-                            <svg class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-                        
-                        <div v-show="isUnitDDOpen" 
-                             class="absolute left-0 mt-0 w-64 bg-white shadow-2xl rounded-xl border border-gray-100 py-4 z-[100] transform transition-all duration-300">
-                            <Link href="/donor/info/stok" class="block px-6 py-3 text-sm hover:bg-red-50 hover:text-red-600 transition">Stok Darah</Link>
-                            <Link href="/donor/jadwal" class="block px-6 py-3 text-sm hover:bg-red-50 hover:text-red-600 transition">Jadwal Donor/ Mobil Unit</Link>
+                        <!-- Dropdown Menu -->
+                        <div v-else 
+                             class="relative group" 
+                             @mouseenter="openDropdown = menu.id" 
+                             @mouseleave="openDropdown = null">
+                            <button class="hover:text-red-600 transition flex items-center gap-1 py-2 uppercase"
+                                    :class="{'text-red-600': openDropdown === menu.id}">
+                                {{ menu.name }}
+                                <svg class="w-4 h-4 transition-transform" :class="{'rotate-180': openDropdown === menu.id}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            
+                            <transition name="fade">
+                                <div v-show="openDropdown === menu.id" 
+                                     class="absolute left-0 mt-0 w-64 bg-white shadow-2xl rounded-xl border border-gray-100 py-4 z-[100] transform transition-all duration-300">
+                                    <template v-for="child in menu.children" :key="child.id">
+                                        <Link :href="child.url || '#'" 
+                                              class="block px-6 py-3 text-sm hover:bg-red-50 hover:text-red-600 transition">
+                                            {{ child.name }}
+                                        </Link>
+                                    </template>
+                                </div>
+                            </transition>
                         </div>
-                    </div>
-
-                    <!-- Dropdown Markas -->
-                    <div class="relative group" @mouseenter="isMarkisOpen = true" @mouseleave="isMarkisOpen = false">
-                        <button class="hover:text-red-600 transition flex items-center gap-1 py-2 uppercase">
-                            MARKAS
-                            <svg class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-                        
-                        <div v-show="isMarkisOpen" 
-                             class="absolute left-0 mt-0 w-64 bg-white shadow-2xl rounded-xl border border-gray-100 py-4 z-[100] transform transition-all duration-300">
-                            <Link href="/markas/pertolongan-pertama" class="block px-6 py-3 text-sm hover:bg-red-50 hover:text-red-600 transition">PPPK</Link>
-                            <Link href="/markas/sibats" class="block px-6 py-3 text-sm hover:bg-red-50 hover:text-red-600 transition">Layanan Ambulance</Link>
-                        </div>
-                    </div>
-
-                    <!-- Dropdown Klinik -->
-                    <div class="relative group" @mouseenter="isKlinikOpen = true" @mouseleave="isKlinikOpen = false">
-                        <button class="hover:text-red-600 transition flex items-center gap-1 py-2 uppercase">
-                            KLINIK
-                            <svg class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-                        
-                        <div v-show="isKlinikOpen" 
-                             class="absolute left-0 mt-0 w-64 bg-white shadow-2xl rounded-xl border border-gray-100 py-4 z-[100] transform transition-all duration-300">
-                            <Link href="/profil/struktur/klinik" class="block px-6 py-3 text-sm hover:bg-red-50 hover:text-red-600 transition">Waktu Pelayanan</Link>
-                            <Link href="/donor/info/produk" class="block px-6 py-3 text-sm hover:bg-red-50 hover:text-red-600 transition">Jenis Pelayanan</Link>
-                            <Link href="/donor/registrasi" class="block px-6 py-3 text-sm hover:bg-red-50 hover:text-red-600 transition">Jadwal Dokter Praktek</Link>
-                        </div>
-                    </div>
-
-                    <Link href="/markas/berita" class="hover:text-red-600 transition">BERITA</Link>
-
-                    <!-- Dropdown Hubungi Kami -->
-                    <div class="relative group" @mouseenter="isHubungiKamiOpen = true" @mouseleave="isHubungiKamiOpen = false">
-                        <button class="hover:text-red-600 transition flex items-center gap-1 py-2 uppercase">
-                            HUBUNGI KAMI
-                            <svg class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-                        
-                        <div v-show="isHubungiKamiOpen" 
-                             class="absolute left-0 mt-0 w-64 bg-white shadow-2xl rounded-xl border border-gray-100 py-4 z-[100] transform transition-all duration-300">
-                            <a href="https://wa.me/6285742750060" target="_blank" class="block px-6 py-3 text-sm hover:bg-red-50 hover:text-red-600 transition">Whatsapp</a>
-                        </div>
-                    </div>
+                    </template>
                 </nav>
                 <div class="flex items-center gap-4">
                     <!-- Search (Desktop) -->
@@ -183,81 +131,37 @@ const mobileHubungiKamiOpen = ref(false);
                         </div>
 
                         <nav class="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
-                            <Link href="/" class="block text-lg font-bold text-red-600" @click="isMobileMenuOpen = false">BERANDA</Link>
-                            
-                            <!-- Profil Accordion -->
-                            <div class="space-y-2">
-                                <button @click="mobileProfilOpen = !mobileProfilOpen" class="w-full flex justify-between items-center text-lg font-bold text-gray-700 hover:text-red-600 transition-colors">
-                                    PROFIL
-                                    <svg :class="{'rotate-180': mobileProfilOpen}" class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                                </button>
-                                <transition name="accordion">
-                                    <div v-show="mobileProfilOpen" class="pl-4 space-y-3 border-l-2 border-red-100 mt-2 overflow-hidden">
-                                        <Link href="/profil/visi-misi" class="block text-gray-600 hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">Visi Misi</Link>
-                                        <Link href="/profil/struktur/markas" class="block text-gray-600 hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">Struktur Organisasi</Link>
-                                        <Link href="/profil/7-prinsip" class="block text-gray-600 hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">7 Prinsip</Link>
-                                        <Link href="/profil/sejarah" class="block text-gray-600 hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">Sejarah PMI</Link>
-                                    </div>
-                                </transition>
-                            </div>
+                            <template v-for="menu in menus" :key="menu.id">
+                                <!-- Simple Link -->
+                                <Link v-if="!menu.children || menu.children.length === 0" 
+                                      :href="menu.url || '#'" 
+                                      class="block text-lg font-bold text-gray-700 uppercase hover:text-red-600 transition-colors" 
+                                      @click="isMobileMenuOpen = false">
+                                    {{ menu.name }}
+                                </Link>
 
-                            <!-- Unit DD Accordion -->
-                            <div class="space-y-2">
-                                <button @click="mobileUnitDDOpen = !mobileUnitDDOpen" class="w-full flex justify-between items-center text-lg font-bold text-gray-700 uppercase hover:text-red-600 transition-colors">
-                                    UNIT DD
-                                    <svg :class="{'rotate-180': mobileUnitDDOpen}" class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                                </button>
-                                <transition name="accordion">
-                                    <div v-show="mobileUnitDDOpen" class="pl-4 space-y-3 border-l-2 border-red-100 mt-2 text-gray-600 overflow-hidden">
-                                        <Link href="/donor/info/stok" class="block hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">Stok Darah</Link>
-                                        <Link href="/donor/jadwal" class="block hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">Jadwal Donor/ Mobil Unit</Link>
-                                    </div>
-                                </transition>
-                            </div>
-
-                            <!-- Markas Accordion -->
-                            <div class="space-y-2">
-                                <button @click="mobileMarkisOpen = !mobileMarkisOpen" class="w-full flex justify-between items-center text-lg font-bold text-gray-700 uppercase hover:text-red-600 transition-colors">
-                                    MARKAS
-                                    <svg :class="{'rotate-180': mobileMarkisOpen}" class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                                </button>
-                                <transition name="accordion">
-                                    <div v-show="mobileMarkisOpen" class="pl-4 space-y-3 border-l-2 border-red-100 mt-2 text-gray-600 overflow-hidden">
-                                        <Link href="/markas/pertolongan-pertama" class="block hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">PPPK</Link>
-                                        <Link href="/markas/sibats" class="block hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">Ambulance</Link>
-                                    </div>
-                                </transition>
-                            </div>
-
-                            <!-- Klinik Accordion -->
-                            <div class="space-y-2">
-                                <button @click="mobileKlinikOpen = !mobileKlinikOpen" class="w-full flex justify-between items-center text-lg font-bold text-gray-700 uppercase hover:text-red-600 transition-colors">
-                                    KLINIK
-                                    <svg :class="{'rotate-180': mobileKlinikOpen}" class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                                </button>
-                                <transition name="accordion">
-                                    <div v-show="mobileKlinikOpen" class="pl-4 space-y-3 border-l-2 border-red-100 mt-2 text-gray-600 overflow-hidden">
-                                        <Link href="/profil/struktur/klinik" class="block hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">Waktu Pelayanan</Link>
-                                        <Link href="/donor/info/produk" class="block hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">Jenis Pelayanan</Link>
-                                        <Link href="/donor/registrasi" class="block hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">Jadwal Dokter Praktek</Link>
-                                    </div>
-                                </transition>
-                            </div>
-
-                            <Link href="/markas/berita" class="block text-lg font-bold text-gray-700 uppercase hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">BERITA</Link>
-
-                            <!-- Hubungi Kami Accordion -->
-                            <div class="space-y-2">
-                                <button @click="mobileHubungiKamiOpen = !mobileHubungiKamiOpen" class="w-full flex justify-between items-center text-lg font-bold text-gray-700 uppercase hover:text-red-600 transition-colors">
-                                    HUBUNGI KAMI
-                                    <svg :class="{'rotate-180': mobileHubungiKamiOpen}" class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                                </button>
-                                <transition name="accordion">
-                                    <div v-show="mobileHubungiKamiOpen" class="pl-4 space-y-3 border-l-2 border-red-100 mt-2 text-gray-600 overflow-hidden">
-                                        <a href="https://wa.me/6285742750060" target="_blank" class="block hover:text-red-600 transition-colors" @click="isMobileMenuOpen = false">Whatsapp</a>
-                                    </div>
-                                </transition>
-                            </div>
+                                <!-- Accordion -->
+                                <div v-else class="space-y-2">
+                                    <button @click="toggleMobileAccordion(menu.id)" 
+                                            class="w-full flex justify-between items-center text-lg font-bold text-gray-700 uppercase hover:text-red-600 transition-colors">
+                                        {{ menu.name }}
+                                        <svg :class="{'rotate-180': openMobileAccordion === menu.id}" class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </button>
+                                    <transition name="accordion">
+                                        <div v-show="openMobileAccordion === menu.id" class="pl-4 space-y-3 border-l-2 border-red-100 mt-2 overflow-hidden">
+                                            <template v-for="child in menu.children" :key="child.id">
+                                                <Link :href="child.url || '#'" 
+                                                      class="block text-gray-600 hover:text-red-600 transition-colors" 
+                                                      @click="isMobileMenuOpen = false">
+                                                    {{ child.name }}
+                                                </Link>
+                                            </template>
+                                        </div>
+                                    </transition>
+                                </div>
+                            </template>
                         </nav>
 
                         <div class="p-6 border-t space-y-4 bg-gray-50/50 text-center">

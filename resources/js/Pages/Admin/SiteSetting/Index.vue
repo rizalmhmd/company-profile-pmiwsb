@@ -4,18 +4,28 @@ import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const props = defineProps({
-    setting: Object,
+    site: Object,
+    footer: Object,
 });
 
 const form = useForm({
-    site_name: props.setting.site_name || 'PMI Kabupaten Wonosobo',
+    // Branding
+    site_name: props.site.site_name || 'PMI Kabupaten Wonosobo',
     logo: null,
     favicon: null,
+    // Footer & Contact
+    about_pmi: props.footer?.about_pmi ?? '',
+    address:   props.footer?.address   ?? '',
+    phone:     props.footer?.phone     ?? '',
+    email:     props.footer?.email     ?? '',
+    facebook:  props.footer?.facebook  ?? '',
+    instagram: props.footer?.instagram ?? '',
+    copyright: props.footer?.copyright ?? '',
     _method: 'POST',
 });
 
-const logoPreview = ref(props.setting.logo_url);
-const faviconPreview = ref(props.setting.favicon_url);
+const logoPreview = ref(props.site.logo_url);
+const faviconPreview = ref(props.site.favicon_url);
 
 const onLogoChange = (e) => {
     const file = e.target.files[0];
@@ -36,71 +46,118 @@ const onFaviconChange = (e) => {
 const submit = () => {
     form.post('/manage/site-setting', {
         preserveScroll: true,
-        onSuccess: () => {
-            // Success notification could go here
-        },
     });
 };
 </script>
 
 <template>
     <AdminLayout title="Pengaturan Situs">
-        <div class="max-w-4xl">
+        <div class="max-w-6xl mx-auto pb-20">
             <div class="mb-8">
-                <h2 class="text-2xl font-black text-gray-900">Branding Situs</h2>
-                <p class="text-gray-500">Konfigurasi logo, favicon, dan identitas dasar website PMI.</p>
+                <p class="text-gray-500">Kelola identitas visual, informasi kontak, dan footer website PMI.</p>
             </div>
 
-            <form @submit.prevent="submit" class="space-y-6">
-                <!-- Branding Card -->
-                <div class="bg-white p-8 rounded-[3rem] shadow-sm border border-gray-200">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-                        <!-- Logo Upload -->
-                        <div class="space-y-4">
-                            <label class="block text-xs font-black text-gray-400 uppercase tracking-widest">Logo PMI (Header)</label>
-                            <div class="relative group">
-                                <div class="w-full h-48 bg-gray-50 rounded-[2.5rem] overflow-hidden border-2 border-dashed border-gray-200 flex items-center justify-center transition group-hover:border-red-300 relative">
-                                    <img v-if="logoPreview" :src="logoPreview" class="max-w-[80%] max-h-[80%] object-contain">
+            <form @submit.prevent="submit" class="space-y-12">
+                <!-- Branding Section -->
+                <section class="space-y-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.828 2.828a2 2 0 010 2.828l-1.657 1.657M7 7.343l-1.657-1.657a2 2 0 00-2.828 0L2.515 8.515a2 2 0 000 2.828l1.657 1.657"/></svg>
+                        </div>
+                        <h2 class="text-xl font-bold text-gray-800">Identitas & Branding</h2>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                            <!-- Logo Upload -->
+                            <div class="space-y-3">
+                                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest">Logo Header</label>
+                                <div class="relative group h-40 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200 flex items-center justify-center transition hover:border-red-300 relative overflow-hidden">
+                                    <img v-if="logoPreview" :src="logoPreview" class="max-w-[70%] max-h-[70%] object-contain relative z-10">
                                     <div v-else class="text-center text-gray-400">
-                                        <svg class="w-12 h-12 mx-auto mb-2 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                        <span class="text-[10px] font-black uppercase tracking-widest">Pilih Logo</span>
+                                        <svg class="w-10 h-10 mx-auto mb-2 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                        <span class="text-[10px] font-bold uppercase tracking-widest">Upload Logo</span>
                                     </div>
-                                    <input type="file" @change="onLogoChange" class="absolute inset-0 opacity-0 cursor-pointer">
+                                    <input type="file" @change="onLogoChange" class="absolute inset-0 opacity-0 cursor-pointer z-20">
                                 </div>
-                                <div class="mt-2 text-[10px] text-gray-400 font-medium italic text-center">Rekomendasi: PNG Transparan, Max 2MB.</div>
+                            </div>
+
+                            <!-- Favicon Upload -->
+                            <div class="space-y-3">
+                                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest">Favicon (Browser)</label>
+                                <div class="relative group h-40 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200 flex items-center justify-center transition hover:border-red-300 relative overflow-hidden">
+                                    <div v-if="faviconPreview" class="w-16 h-16 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center p-2 relative z-10">
+                                        <img :src="faviconPreview" class="w-full h-full object-contain">
+                                    </div>
+                                    <div v-else class="text-center text-gray-400">
+                                        <svg class="w-10 h-10 mx-auto mb-2 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        <span class="text-[10px] font-bold uppercase tracking-widest">Upload Favicon</span>
+                                    </div>
+                                    <input type="file" @change="onFaviconChange" class="absolute inset-0 opacity-0 cursor-pointer z-20">
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Favicon Upload -->
-                        <div class="space-y-4">
-                            <label class="block text-xs font-black text-gray-400 uppercase tracking-widest">Favicon (Ikon Tab)</label>
-                            <div class="relative group">
-                                <div class="w-full h-48 bg-gray-50 rounded-[2.5rem] overflow-hidden border-2 border-dashed border-gray-200 flex items-center justify-center transition group-hover:border-red-300 relative">
-                                    <div v-if="faviconPreview" class="p-4 bg-white rounded-2xl shadow-sm border border-gray-100">
-                                        <img :src="faviconPreview" class="w-16 h-16 object-contain">
-                                    </div>
-                                    <div v-else class="text-center text-gray-400">
-                                        <svg class="w-12 h-12 mx-auto mb-2 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                        <span class="text-[10px] font-black uppercase tracking-widest">Pilih Favicon</span>
-                                    </div>
-                                    <input type="file" @change="onFaviconChange" class="absolute inset-0 opacity-0 cursor-pointer">
-                                </div>
-                                <div class="mt-2 text-[10px] text-gray-400 font-medium italic text-center">Rekomendasi: ICO atau PNG 32x32, Max 1MB.</div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Nama Situs / Organisasi</label>
+                            <input v-model="form.site_name" type="text" class="w-full px-6 py-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition font-bold text-gray-700" placeholder="PMI Kabupaten Wonosobo">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Contact & Footer Section -->
+                <section class="space-y-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                        </div>
+                        <h2 class="text-xl font-bold text-gray-800">Kontak & Footer</h2>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Tentang PMI (Footer)</label>
+                            <textarea v-model="form.about_pmi" rows="3" class="w-full px-6 py-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition font-medium text-gray-700 resize-none" placeholder="Deskripsi singkat..."></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Alamat Kantor</label>
+                                <input v-model="form.address" type="text" class="w-full px-6 py-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition font-bold text-gray-700">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Nomor Telepon</label>
+                                <input v-model="form.phone" type="text" class="w-full px-6 py-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition font-bold text-gray-700">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Email</label>
+                                <input v-model="form.email" type="email" class="w-full px-6 py-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition font-bold text-gray-700">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Teks Copyright</label>
+                                <input v-model="form.copyright" type="text" class="w-full px-6 py-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition font-bold text-gray-700">
+                            </div>
+                        </div>
+
+                        <div class="pt-6 border-t border-gray-50 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">URL Facebook</label>
+                                <input v-model="form.facebook" type="url" class="w-full px-6 py-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition font-medium text-gray-700" placeholder="https://...">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">URL Instagram</label>
+                                <input v-model="form.instagram" type="url" class="w-full px-6 py-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition font-medium text-gray-700" placeholder="https://...">
                             </div>
                         </div>
                     </div>
-
-                    <div class="mt-12 pt-12 border-t border-gray-50">
-                        <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Nama Situs / Organisasi</label>
-                        <input v-model="form.site_name" type="text" class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-red-500 transition font-bold text-gray-700" placeholder="Contoh: PMI Kabupaten Wonosobo">
-                    </div>
-                </div>
+                </section>
 
                 <!-- Actions -->
-                <div class="flex items-center justify-end">
+                <div class="sticky bottom-8 bg-white/80 backdrop-blur-xl border border-gray-100 p-4 rounded-3xl shadow-2xl flex items-center justify-between">
+                    <p class="text-xs text-gray-400 font-medium px-4">Pastikan data sudah benar sebelum menyimpan.</p>
                     <button type="submit" :disabled="form.processing"
-                        class="px-12 py-4 bg-red-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-red-700 transition shadow-xl shadow-red-200 disabled:opacity-50">
-                        {{ form.processing ? 'Menyimpan...' : 'Simpan Perubahan' }}
+                        class="px-10 py-4 bg-red-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-red-700 transition shadow-xl shadow-red-200 disabled:opacity-50">
+                        {{ form.processing ? 'Menyimpan...' : 'Simpan Semua Perubahan' }}
                     </button>
                 </div>
             </form>
