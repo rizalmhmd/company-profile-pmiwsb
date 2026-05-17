@@ -128,6 +128,24 @@ Route::middleware('auth')->group(function () {
     });
 });
 
+// Berita Routes (Public UI)
+Route::get('/berita', function () {
+    return Inertia::render('Markas/Berita', [
+        'posts' => \App\Models\Post::with('category')->where('is_published', true)->latest()->paginate(12),
+    ]);
+})->name('berita.index');
+
+Route::get('/berita/{slug}', function ($slug) {
+    $post = \App\Models\Post::with('category')->where('slug', $slug)->first();
+    if ($post) {
+        return Inertia::render('Markas/PostShow', [
+            'post' => $post,
+            'relatedPosts' => \App\Models\Post::where('id', '!=', $post->id)->where('is_published', true)->latest()->take(5)->get(),
+        ]);
+    }
+    abort(404);
+})->name('berita.show');
+
 // Dynamic Static Pages for Public UI
 Route::get('/{category}/{page?}/{subpage?}', function ($category, $page = null, $subpage = null) {
     if (!in_array($category, ['profil', 'markas', 'donor'])) {

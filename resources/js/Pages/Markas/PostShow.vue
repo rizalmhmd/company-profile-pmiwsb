@@ -73,7 +73,7 @@ const props = defineProps({
                             Berita Lainnya
                         </h3>
                         <div class="space-y-6">
-                            <Link v-for="related in relatedPosts" :key="related.id" :href="`/markas/berita/${related.slug}`" class="flex gap-4 group">
+                            <Link v-for="related in relatedPosts" :key="related.id" :href="`/berita/${related.slug}`" class="flex gap-4 group">
                                 <div class="w-20 h-20 rounded-2xl overflow-hidden shrink-0">
                                     <img :src="related.image_url || 'https://images.unsplash.com/photo-1542884748-2b87b36c6b90?q=80&w=2070&auto=format&fit=crop'" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
                                 </div>
@@ -89,7 +89,7 @@ const props = defineProps({
                             </div>
                         </div>
                         
-                        <Link href="/markas/berita" class="block w-full mt-8 py-4 bg-gray-50 text-center rounded-2xl text-xs font-black text-gray-400 uppercase tracking-widest hover:bg-red-50 hover:text-red-600 transition">
+                        <Link href="/berita" class="block w-full mt-8 py-4 bg-gray-50 text-center rounded-2xl text-xs font-black text-gray-400 uppercase tracking-widest hover:bg-red-50 hover:text-red-600 transition">
                             Lihat Semua Berita
                         </Link>
                     </div>

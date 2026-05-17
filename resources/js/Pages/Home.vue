@@ -169,7 +169,7 @@ const props = defineProps({
                             <h2 class="text-2xl sm:text-4xl font-bold mb-2 sm:mb-4">Berita <span class="text-red-600">Terkini</span></h2>
                             <div class="w-12 sm:w-20 h-1 bg-red-600"></div>
                         </div>
-                        <Link href="/markas/berita" class="text-red-600 text-sm sm:text-base font-bold flex items-center gap-1 sm:gap-2 hover:underline">
+                        <Link href="/berita" class="text-red-600 text-sm sm:text-base font-bold flex items-center gap-1 sm:gap-2 hover:underline">
                             Lihat Semua
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </Link>
@@ -177,7 +177,7 @@ const props = defineProps({
  
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
                         <article v-for="post in latestPosts" :key="post.id" class="bg-white rounded-3xl overflow-hidden shadow-md border border-gray-100 transition hover:shadow-2xl flex flex-row sm:flex-col group">
-                            <Link :href="`/markas/berita/${post.slug}`" class="w-1/3 sm:w-full h-auto sm:h-56 overflow-hidden relative block">
+                            <Link :href="`/berita/${post.slug}`" class="w-1/3 sm:w-full h-auto sm:h-56 overflow-hidden relative block">
                                 <img :src="post.image_url || 'https://images.unsplash.com/photo-1542884748-2b87b36c6b90?q=80&w=2070&auto=format&fit=crop'" alt="Berita" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
                                 <div class="absolute top-4 left-4">
                                     <span class="px-3 py-1 bg-red-600 text-white text-[10px] font-black uppercase rounded-lg shadow-lg">{{ post.category?.name || 'UMUM' }}</span>
@@ -185,7 +185,7 @@ const props = defineProps({
                             </Link>
                             <div class="w-2/3 sm:w-full p-4 sm:p-8 flex flex-col justify-between bg-white relative z-10">
                                 <div>
-                                    <Link :href="`/markas/berita/${post.slug}`">
+                                    <Link :href="`/berita/${post.slug}`">
                                         <h3 class="text-sm sm:text-xl font-bold mt-1 sm:mt-2 mb-1 sm:mb-4 hover:text-red-600 transition line-clamp-2 leading-tight">{{ post.title }}</h3>
                                     </Link>
                                     <p class="hidden sm:block text-gray-500 text-sm mb-6 line-clamp-3 leading-relaxed" v-html="post.content"></p>

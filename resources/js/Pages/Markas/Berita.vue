@@ -20,7 +20,7 @@ const props = defineProps({
         <div class="container mx-auto px-4 py-16 -mt-10 relative z-20">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
                 <article v-for="post in posts.data" :key="post.id" class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-gray-100 transition-all duration-500 hover:shadow-2xl hover:shadow-red-100 group flex flex-col">
-                    <Link :href="`/markas/berita/${post.slug}`" class="relative block overflow-hidden aspect-[16/10]">
+                    <Link :href="`/berita/${post.slug}`" class="relative block overflow-hidden aspect-[16/10]">
                         <img :src="post.image_url || 'https://images.unsplash.com/photo-1542884748-2b87b36c6b90?q=80&w=2070&auto=format&fit=crop'" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
                         <div class="absolute top-6 left-6">
                             <span class="px-4 py-1.5 bg-red-600 text-white text-[10px] font-black uppercase rounded-xl shadow-lg">{{ post.category?.name || 'UMUM' }}</span>
@@ -33,14 +33,14 @@ const props = defineProps({
                             {{ new Date(post.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) }}
                         </div>
                         
-                        <Link :href="`/markas/berita/${post.slug}`">
+                        <Link :href="`/berita/${post.slug}`">
                             <h2 class="text-xl font-black text-gray-900 mb-4 group-hover:text-red-600 transition line-clamp-2 leading-tight">{{ post.title }}</h2>
                         </Link>
                         
                         <p class="text-gray-500 text-sm leading-relaxed mb-8 line-clamp-3" v-html="post.content"></p>
                         
                         <div class="mt-auto pt-6 border-t border-gray-50 flex items-center justify-between">
-                            <Link :href="`/markas/berita/${post.slug}`" class="text-xs font-black uppercase tracking-widest text-red-600 flex items-center gap-2 group-hover:gap-4 transition-all">
+                            <Link :href="`/berita/${post.slug}`" class="text-xs font-black uppercase tracking-widest text-red-600 flex items-center gap-2 group-hover:gap-4 transition-all">
                                 Baca Selengkapnya
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                             </Link>

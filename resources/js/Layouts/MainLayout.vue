@@ -202,7 +202,7 @@ const toggleMobileAccordion = (id) => {
                         <h4 class="text-lg font-bold mb-6 border-b-2 border-red-600 inline-block">Tautan Cepat</h4>
                         <ul class="space-y-3 text-sm text-gray-400">
                             <li><Link href="/profil/visi-misi" class="hover:text-red-500 transition">Visi & Misi</Link></li>
-                            <li><Link href="/markas/berita" class="hover:text-red-500 transition">Berita Terkini</Link></li>
+                            <li><Link href="/berita" class="hover:text-red-500 transition">Berita Terkini</Link></li>
                             <li><Link href="/donor/jadwal" class="hover:text-red-500 transition">Jadwal Donor</Link></li>
                             <li><Link href="/profil/struktur/dewan" class="hover:text-red-500 transition">Struktur Organisasi</Link></li>
                         </ul>
