@@ -106,7 +106,7 @@ class PageSeeder extends Seeder
             [
                 'title' => 'Struktur Markas',
                 'slug' => 'struktur-markas',
-                'category' => 'Markas',
+                'category' => 'Profil',
                 'content' => [
                     'hero_description' => 'Manajemen dan operasional Markas PMI Kabupaten Wonosobo.',
                     'sections' => [
@@ -119,7 +119,7 @@ class PageSeeder extends Seeder
             ],
             [
                 'title' => 'Jadwal Dokter',
-                'slug' => 'registrasi',
+                'slug' => 'jadwal-dokter',
                 'category' => 'Klinik',
                 'content' => [
                     'hero_description' => 'Informasi waktu praktik dokter di Klinik PMI.',
@@ -131,7 +131,7 @@ class PageSeeder extends Seeder
             [
                 'title' => 'Struktur Klinik',
                 'slug' => 'struktur-klinik',
-                'category' => 'Klinik',
+                'category' => 'Profil',
                 'content' => [
                     'hero_description' => 'Manajemen dan tenaga medis Klinik PMI Kabupaten Wonosobo.',
                     'sections' => [
@@ -140,6 +140,19 @@ class PageSeeder extends Seeder
                             'items' => ['Senin - Sabtu: 08:00 - 20:00', 'Minggu: Tutup']
                         ]
                     ]
+                ],
+            ],
+            [
+                'title' => 'Struktur Organisasi',
+                'slug' => 'struktur-organisasi',
+                'category' => 'Profil',
+                'content' => [
+                    'hero_description' => 'Struktur organisasi Palang Merah Indonesia Kabupaten Wonosobo.',
+                    'org_chart' => [
+                        'pengurus' => 'Pengurus',
+                        'sekretariat' => 'Sekretariat',
+                        'units' => ['Markas', 'Unit Donor Darah', 'Klinik Pratama'],
+                    ],
                 ],
             ],
             [

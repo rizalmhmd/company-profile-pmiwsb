@@ -8,8 +8,66 @@ const props = defineProps({
     pageData: Object,
 });
 
-const sections = computed(() => {
-    return props.pageData?.content?.sections || [];
+const legacySections = computed(() => props.pageData?.content?.sections || []);
+
+const clinicStructure = computed(() => {
+    const fromCms = props.pageData?.content?.clinic_structure;
+    if (fromCms?.head && fromCms?.admin && fromCms?.clinical && fromCms?.functional) return fromCms;
+
+    return {
+        head: 'Kepala Klinik',
+        admin: {
+            title: 'Kepala Bagian Administrasi dan Tata Kelola',
+            subbags: [
+                {
+                    title: 'Ka. Subbag. Keuangan',
+                    persons_in_charge: ['Pj. Kasir', 'Pj. Anggaran', 'Pj. Jasa Pelayanan dan Jasa Medis'],
+                },
+                {
+                    title: 'Ka. Subbag. Umum dan Kepegawaian',
+                    persons_in_charge: ['Pj. Umum', 'Pj. Kepegawaian'],
+                },
+                {
+                    title: 'Ka. Subbag. Sarana Prasarana dan Logistik',
+                    persons_in_charge: ['Pj. Sarana dan Prasarana', 'Pj. Logistik'],
+                },
+            ],
+        },
+        functional: {
+            title: 'Kelompok Fungsional',
+            roles: [
+                'Dokter Umum',
+                'Dokter Gigi',
+                'Perawat',
+                'Perawat Gigi',
+                'Bidan',
+                'Apoteker',
+                'Asisten Apoteker',
+                'Sanitarian',
+                'Sopir',
+            ],
+        },
+        clinical: {
+            title: 'Kepala Bidang Pelayanan Klinis',
+            subbids: [
+                { title: 'Ka. Subbid Pelayanan Pendaftaran', persons_in_charge: [] },
+                { title: 'Ka. Subbid Pelayanan Umum', persons_in_charge: [] },
+                { title: 'Ka. Subbid Pelayanan KIA-KB', persons_in_charge: ['Pj. Pelayanan KIA', 'Pj. Pelayanan KB'] },
+                { title: 'Ka. Subbid Pelayanan Gigi', persons_in_charge: [] },
+                { title: 'Ka. Subbid Pelayanan Kefarmasian', persons_in_charge: ['Pj. Ruang Pelayanan Obat', 'Pj. Gudang Obat dan Bahan Habis Pakai'] },
+                { title: 'Ka. Subbid Pelayanan Kamar Bersalin dan Ruang Nifas', persons_in_charge: ['Pj. Pelayanan Kamar Bersalin', 'Pj. Pelayanan Ruang Nifas'] },
+                {
+                    title: 'Ka. Subbid Pelayanan Penunjang',
+                    persons_in_charge: [
+                        'Pj. Pelayanan Rekam Medis',
+                        'Pj. Pelayanan Laboratorium',
+                        'Pj. Pelayanan Radiologi',
+                        'Pj. Pelayanan Operasional Ambulans',
+                    ],
+                },
+            ],
+        },
+    };
 });
 </script>
 
@@ -30,22 +88,93 @@ const sections = computed(() => {
         </div>
 
         <div class="container mx-auto px-4 py-16 -mt-10 relative z-20">
-            <div v-if="sections.length > 0" class="space-y-12 max-w-5xl mx-auto">
-                <div v-for="(section, sIdx) in sections" :key="sIdx" class="bg-white rounded-[3rem] shadow-xl p-8 md:p-16 border border-gray-100 relative overflow-hidden">
-                    <h2 class="text-3xl font-black text-gray-900 mb-8 border-b-4 border-red-600 inline-block pb-2">{{ section.title }}</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-                        <div v-for="(item, iIdx) in section.items" :key="iIdx" class="flex items-center gap-4 p-6 bg-gray-50 rounded-2xl hover:bg-red-50 transition border border-transparent hover:border-red-100 group">
-                            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-red-600 shadow-sm shrink-0 group-hover:scale-110 transition">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+            <div class="max-w-6xl mx-auto">
+                <div class="relative overflow-hidden rounded-[3rem] border border-gray-100 bg-white/80 shadow-2xl backdrop-blur p-6 sm:p-10">
+                    <div class="pointer-events-none absolute inset-0">
+                        <div class="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-red-600/10 blur-3xl" />
+                        <div class="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-gray-900/10 blur-3xl" />
+                        <div class="absolute inset-0 opacity-[0.06] [background-image:radial-gradient(#111827_1px,transparent_1px)] [background-size:18px_18px]" />
+                    </div>
+
+                    <div class="relative">
+                        <!-- Head -->
+                        <div class="flex justify-center">
+                            <div class="group relative">
+                                <div class="absolute -inset-1 rounded-2xl bg-gradient-to-r from-red-600/20 to-gray-900/15 blur opacity-60 group-hover:opacity-90 transition" />
+                                <div class="relative w-[320px] min-h-[96px] flex flex-col justify-center px-12 py-6 rounded-2xl border border-gray-200 bg-white shadow-lg text-center">
+                                    <div class="text-[11px] uppercase tracking-[0.22em] font-black text-gray-400">Level 1</div>
+                                    <div class="mt-1 text-xl font-black tracking-tight text-gray-900">{{ clinicStructure.head }}</div>
+                                </div>
                             </div>
-                            <p class="text-gray-700 font-bold leading-relaxed">{{ item }}</p>
+                        </div>
+
+                        <!-- Row 2 -->
+                        <div class="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+                            <!-- Admin -->
+                            <div class="rounded-3xl border border-gray-100 bg-white shadow-sm p-6">
+                                <div class="text-[10px] font-black uppercase tracking-widest text-gray-500">Administrasi</div>
+                                <div class="mt-2 text-lg font-black text-gray-900">{{ clinicStructure.admin.title }}</div>
+
+                                <div class="mt-5 space-y-4">
+                                    <div v-for="(sb, idx) in clinicStructure.admin.subbags" :key="idx" class="rounded-2xl border border-gray-100 bg-gray-50 p-4">
+                                        <div class="font-black text-gray-900 text-sm">{{ sb.title }}</div>
+                                        <ul v-if="sb.persons_in_charge?.length" class="mt-2 space-y-1 text-sm text-gray-700">
+                                            <li v-for="(pj, pjIdx) in sb.persons_in_charge" :key="pjIdx" class="flex gap-2">
+                                                <span class="mt-1 h-1.5 w-1.5 rounded-full bg-red-600/70 shrink-0"></span>
+                                                <span class="font-semibold">{{ pj }}</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Clinical head -->
+                            <div class="rounded-3xl border border-gray-100 bg-white shadow-sm p-6">
+                                <div class="text-[10px] font-black uppercase tracking-widest text-gray-500">Pelayanan</div>
+                                <div class="mt-2 text-lg font-black text-gray-900">{{ clinicStructure.clinical.title }}</div>
+
+                                <div class="mt-5 grid grid-cols-1 gap-4">
+                                    <div v-for="(sb, idx) in clinicStructure.clinical.subbids" :key="idx" class="rounded-2xl border border-gray-100 bg-gray-50 p-4">
+                                        <div class="font-black text-gray-900 text-sm">{{ sb.title }}</div>
+                                        <ul v-if="sb.persons_in_charge?.length" class="mt-2 space-y-1 text-sm text-gray-700">
+                                            <li v-for="(pj, pjIdx) in sb.persons_in_charge" :key="pjIdx" class="flex gap-2">
+                                                <span class="mt-1 h-1.5 w-1.5 rounded-full bg-red-600/70 shrink-0"></span>
+                                                <span class="font-semibold">{{ pj }}</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Functional -->
+                            <div class="rounded-3xl border border-gray-100 bg-white shadow-sm p-6">
+                                <div class="text-[10px] font-black uppercase tracking-widest text-gray-500">Fungsional</div>
+                                <div class="mt-2 text-lg font-black text-gray-900">{{ clinicStructure.functional.title }}</div>
+
+                                <div class="mt-5 grid grid-cols-2 gap-3">
+                                    <div v-for="(role, idx) in clinicStructure.functional.roles" :key="idx" class="rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm font-bold text-gray-800">
+                                        {{ role }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Optional: legacy sections fallback if still used -->
+                        <div v-if="legacySections.length" class="mt-12 pt-10 border-t border-gray-100">
+                            <div class="text-sm font-black uppercase tracking-widest text-gray-400">Informasi Tambahan</div>
+                            <div class="mt-6 space-y-8">
+                                <div v-for="(section, sIdx) in legacySections" :key="sIdx" class="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
+                                    <div class="text-lg font-black text-gray-900">{{ section.title }}</div>
+                                    <ul class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-700">
+                                        <li v-for="(item, iIdx) in section.items" :key="iIdx" class="rounded-2xl bg-gray-50 border border-gray-100 px-4 py-3 font-semibold">
+                                            {{ item }}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div v-else class="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-gray-100 text-center max-w-3xl mx-auto">
-                <h2 class="text-2xl font-bold text-gray-800 mb-3">Konten Segera Hadir</h2>
-                <p class="text-gray-500">Struktur klinik sedang diperbarui oleh administrator.</p>
             </div>
         </div>
     </MainLayout>

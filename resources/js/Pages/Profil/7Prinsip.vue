@@ -157,7 +157,7 @@ const getColorClass = (name) => {
                         Ketujuh prinsip ini diadopsi oleh Konferensi Internasional Palang Merah ke-20 di Wina pada tahun 1965. Prinsip-prinsip ini mengikat seluruh Gerakan dan menjadi identitas serta panduan moral bagi setiap relawan dan staf PMI.
                     </p>
                     <div class="flex flex-wrap justify-center gap-4">
-                        <a href="/profil/sejarah" class="px-8 py-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold transition shadow-lg shadow-red-900/20">Sejarah PMI</a>
+                        <a href="/profile/sejarah" class="px-8 py-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold transition shadow-lg shadow-red-900/20">Sejarah PMI</a>
                         <a href="/" class="px-8 py-4 bg-gray-800 hover:bg-gray-700 text-white rounded-2xl font-bold transition border border-gray-700">Kembali ke Beranda</a>
                     </div>
                 </div>

@@ -201,10 +201,10 @@ const toggleMobileAccordion = (id) => {
                     <div>
                         <h4 class="text-lg font-bold mb-6 border-b-2 border-red-600 inline-block">Tautan Cepat</h4>
                         <ul class="space-y-3 text-sm text-gray-400">
-                            <li><Link href="/profil/visi-misi" class="hover:text-red-500 transition">Visi & Misi</Link></li>
+                            <li><Link href="/profile/visi-misi" class="hover:text-red-500 transition">Visi & Misi</Link></li>
                             <li><Link href="/berita" class="hover:text-red-500 transition">Berita Terkini</Link></li>
                             <li><Link href="/donor/jadwal" class="hover:text-red-500 transition">Jadwal Donor</Link></li>
-                            <li><Link href="/profil/struktur/dewan" class="hover:text-red-500 transition">Struktur Organisasi</Link></li>
+                            <li><Link href="/profile/struktur-organisasi" class="hover:text-red-500 transition">Struktur Organisasi</Link></li>
                         </ul>
                     </div>
 
@@ -247,8 +247,8 @@ const toggleMobileAccordion = (id) => {
                 <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
                     <p>&copy; {{ footer?.copyright || '2026 PMI Kabupaten Wonosobo. All Rights Reserved.' }}</p>
                     <div class="flex gap-6">
-                        <Link href="/profil/mars-hymne" class="hover:text-red-500 transition">Kebijakan Privasi</Link>
-                        <Link href="/profil/sejarah" class="hover:text-red-500 transition">Syarat & Ketentuan</Link>
+                            <Link href="/profile/mars-hymne" class="hover:text-red-500 transition">Kebijakan Privasi</Link>
+                            <Link href="/profile/sejarah" class="hover:text-red-500 transition">Syarat & Ketentuan</Link>
                     </div>
                 </div>
             </div>

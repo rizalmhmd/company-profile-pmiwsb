@@ -146,6 +146,46 @@ Route::get('/berita/{slug}', function ($slug) {
     abort(404);
 })->name('berita.show');
 
+// Backward compatible redirect
+Route::redirect('/donor/registrasi', '/donor/jadwal-dokter', 301);
+
+// Canonical URL scheme (more consistent with menu names)
+Route::get('/profile/struktur-organisasi', function () {
+    return Inertia::render('Profil/Struktur/Organisasi', [
+        'pageData' => \App\Models\Page::where('slug', 'struktur-organisasi')->first(),
+    ]);
+});
+
+Route::get('/klinik/struktur', function () {
+    return Inertia::render('Profil/Struktur/Klinik', [
+        'pageData' => \App\Models\Page::where('slug', 'struktur-klinik')->first(),
+    ]);
+});
+
+// Backward compatible redirects (old -> canonical)
+Route::redirect('/profil/struktur/organisasi', '/profile/struktur-organisasi', 301);
+Route::redirect('/profil/struktur/klinik', '/klinik/struktur', 301);
+Route::redirect('/profil/struktur/markas', '/markas/struktur', 301);
+Route::redirect('/profil/visi-misi', '/profile/visi-misi', 301);
+Route::redirect('/profil/7-prinsip', '/profile/7-prinsip', 301);
+Route::redirect('/profil/sejarah', '/profile/sejarah', 301);
+Route::redirect('/profil/mars-hymne', '/profile/mars-hymne', 301);
+
+// Profile canonical routes
+Route::get('/profile/{page}', function ($page) {
+    // Reuse existing page slug mapping used in dynamic routes.
+    $componentName = str_replace('-', '', ucwords($page, '-'));
+    $component = 'Profil/' . $componentName;
+
+    if (!file_exists(resource_path("js/Pages/{$component}.vue"))) {
+        abort(404);
+    }
+
+    return Inertia::render($component, [
+        'pageData' => \App\Models\Page::where('slug', $page)->first(),
+    ]);
+})->where('page', '[a-zA-Z0-9-]+');
+
 // Dynamic Static Pages for Public UI
 Route::get('/{category}/{page?}/{subpage?}', function ($category, $page = null, $subpage = null) {
     if (!in_array($category, ['profil', 'markas', 'donor'])) {
@@ -226,4 +266,3 @@ Route::get('/{category}/{page?}/{subpage?}', function ($category, $page = null, 
     'page' => '[a-zA-Z0-9-]+',
     'subpage' => '[a-zA-Z0-9-]+'
 ]);
-

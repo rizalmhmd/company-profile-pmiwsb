@@ -112,7 +112,7 @@ const strategicSections = computed(() => {
             <div class="container mx-auto px-4 text-center">
                 <h3 class="text-2xl font-bold mb-8">Ingin berkontribusi bersama kami?</h3>
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
-                    <a href="/donor/registrasi" class="bg-red-600 hover:bg-red-700 px-8 py-4 rounded-xl font-bold transition shadow-xl">Daftar Relawan</a>
+                    <a href="/donor/jadwal-dokter" class="bg-red-600 hover:bg-red-700 px-8 py-4 rounded-xl font-bold transition shadow-xl">Daftar Relawan</a>
                     <a href="https://wa.me/6285742750060" target="_blank" class="bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md px-8 py-4 rounded-xl font-bold transition">Hubungi Kami</a>
                 </div>
             </div>

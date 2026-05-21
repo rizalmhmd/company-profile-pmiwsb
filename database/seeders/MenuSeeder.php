@@ -15,10 +15,10 @@ class MenuSeeder extends Seeder
         $menus = [
             ['name' => 'BERANDA', 'url' => '/', 'order' => 1],
             ['name' => 'PROFIL', 'url' => null, 'order' => 2, 'children' => [
-                ['name' => 'Visi Misi', 'url' => '/profil/visi-misi', 'order' => 1],
-                ['name' => 'Struktur Organisasi', 'url' => '/profil/struktur/markas', 'order' => 2],
-                ['name' => '7 Prinsip', 'url' => '/profil/7-prinsip', 'order' => 3],
-                ['name' => 'Sejarah PMI', 'url' => '/profil/sejarah', 'order' => 4],
+                ['name' => 'Visi Misi', 'url' => '/profile/visi-misi', 'order' => 1],
+                ['name' => 'Struktur Organisasi', 'url' => '/profile/struktur-organisasi', 'order' => 2],
+                ['name' => '7 Prinsip', 'url' => '/profile/7-prinsip', 'order' => 3],
+                ['name' => 'Sejarah PMI', 'url' => '/profile/sejarah', 'order' => 4],
             ]],
             ['name' => 'UNIT DONOR DARAH', 'url' => null, 'order' => 3, 'children' => [
                 ['name' => 'Stok Darah', 'url' => '/donor/info/stok', 'order' => 1],
@@ -29,9 +29,9 @@ class MenuSeeder extends Seeder
                 ['name' => 'Layanan Ambulance', 'url' => '/markas/sibats', 'order' => 2],
             ]],
             ['name' => 'KLINIK', 'url' => null, 'order' => 5, 'children' => [
-                ['name' => 'Waktu Pelayanan', 'url' => '/profil/struktur/klinik', 'order' => 1],
+                ['name' => 'Struktur Klinik', 'url' => '/klinik/struktur', 'order' => 1],
                 ['name' => 'Jenis Pelayanan', 'url' => '/donor/info/produk', 'order' => 2],
-                ['name' => 'Jadwal Dokter Praktek', 'url' => '/donor/registrasi', 'order' => 3],
+                ['name' => 'Jadwal Dokter Praktek', 'url' => '/donor/jadwal-dokter', 'order' => 3],
             ]],
             ['name' => 'BERITA', 'url' => '/markas/berita', 'order' => 6],
             ['name' => 'HUBUNGI KAMI', 'url' => null, 'order' => 7, 'children' => [
@@ -43,11 +43,17 @@ class MenuSeeder extends Seeder
             $children = $menuData['children'] ?? [];
             unset($menuData['children']);
             
-            $menu = \App\Models\Menu::create($menuData);
+            $menu = \App\Models\Menu::updateOrCreate(
+                ['parent_id' => null, 'name' => $menuData['name']],
+                $menuData
+            );
             
             foreach ($children as $childData) {
                 $childData['parent_id'] = $menu->id;
-                \App\Models\Menu::create($childData);
+                \App\Models\Menu::updateOrCreate(
+                    ['parent_id' => $menu->id, 'name' => $childData['name']],
+                    $childData
+                );
             }
         }
     }
