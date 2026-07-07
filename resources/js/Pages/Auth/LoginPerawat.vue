@@ -17,7 +17,7 @@ const submit = () => {
 <template>
     <Head title="Login Perawat" />
 
-    <div class="bg-gray-100 min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="bg-gradient-to-b from-red-600 via-red-100 to-white min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-xl">
             <!-- Header -->
             <div class="text-center">
@@ -36,7 +36,7 @@ const submit = () => {
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
                     <input id="email" v-model="form.email" type="email" autocomplete="email" required
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-red-600 focus:border-red-600 sm:text-sm"
                         placeholder="perawat@pmi.com">
                     <p v-if="form.errors.email" class="mt-1 text-sm text-red-600">{{ form.errors.email }}</p>
                 </div>
@@ -45,7 +45,7 @@ const submit = () => {
                 <div>
                     <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
                     <input id="password" v-model="form.password" type="password" autocomplete="current-password" required
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-red-600 focus:border-red-600 sm:text-sm"
                         placeholder="••••••••">
                     <p v-if="form.errors.password" class="mt-1 text-sm text-red-600">{{ form.errors.password }}</p>
                 </div>
@@ -54,14 +54,14 @@ const submit = () => {
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
                         <input id="remember" v-model="form.remember" type="checkbox"
-                            class="h-4 w-4 text-blue-600 focus:ring-blue-600 border-gray-300 rounded cursor-pointer">
+                            class="h-4 w-4 text-red-600 focus:ring-red-600 border-gray-300 rounded cursor-pointer">
                         <label for="remember" class="ml-2 block text-sm text-gray-700 cursor-pointer">Ingat saya</label>
                     </div>
                 </div>
 
                 <!-- Submit Button -->
                 <button type="submit" 
-                        class="w-full py-2 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition"
+                        class="w-full py-2 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600 transition"
                         :disabled="form.processing">
                     {{ form.processing ? 'Memproses...' : 'Login' }}
                 </button>
@@ -72,12 +72,21 @@ const submit = () => {
                         <p v-for="(error, key) in form.errors" :key="key">• {{ error }}</p>
                     </div>
                 </div>
+                
+                <div v-if="$page.props.flash?.error" class="rounded-lg bg-red-50 p-4 border border-red-200 mt-4">
+                    <div class="text-sm text-red-700">
+                        <p>• {{ $page.props.flash.error }}</p>
+                    </div>
+                </div>
             </form>
 
-            <!-- Back Link -->
-            <div class="text-center">
-                <Link href="/" class="text-sm text-blue-600 hover:text-blue-700">
-                    ← Kembali ke Beranda
+            <!-- Back Link & Other Login -->
+            <div class="text-center space-y-4 mt-6">
+                <Link href="/login/admin" class="text-sm font-medium text-red-600 hover:text-red-700 block">
+                    Masuk sebagai Admin &rarr;
+                </Link>
+                <Link href="/" class="text-sm text-gray-500 hover:text-gray-700 block">
+                    &larr; Kembali ke Beranda
                 </Link>
             </div>
 

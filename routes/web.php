@@ -52,9 +52,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/admin', [DashboardController::class, 'admin'])->name('dashboard.admin');
     Route::get('/dashboard/perawat', [DashboardController::class, 'perawat'])->name('dashboard.perawat');
 
-    // Admin CRUD Routes (Vue-based, admin only)
-    Route::middleware('admin')->prefix('manage')->name('admin.')->group(function () {
-
+    // Admin & Perawat CRUD Routes (Vue-based)
+    Route::middleware('role:admin,perawat')->prefix('manage')->name('admin.')->group(function () {
         // Stok Darah
         Route::get('/blood-stocks', [BloodStockController::class, 'index'])->name('blood-stocks.index');
         Route::get('/blood-stocks/create', [BloodStockController::class, 'create'])->name('blood-stocks.create');
@@ -70,7 +69,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/blood-donors/{bloodDonor}/edit', [BloodDonorController::class, 'edit'])->name('blood-donors.edit');
         Route::put('/blood-donors/{bloodDonor}', [BloodDonorController::class, 'update'])->name('blood-donors.update');
         Route::delete('/blood-donors/{bloodDonor}', [BloodDonorController::class, 'destroy'])->name('blood-donors.destroy');
+    });
 
+    // Admin Only CRUD Routes (Vue-based)
+    Route::middleware('role:admin')->prefix('manage')->name('admin.')->group(function () {
         // Hero Slider / Background
         Route::get('/hero-sliders', [HeroSliderController::class, 'index'])->name('hero-sliders.index');
         Route::get('/hero-sliders/create', [HeroSliderController::class, 'create'])->name('hero-sliders.create');

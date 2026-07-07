@@ -1,0 +1,143 @@
+@startuml
+title Activity Diagram (Swimlane) - Company Profile PMI WSB
+
+skinparam shadowing false
+skinparam linetype ortho
+skinparam activity {
+  BackgroundColor #F8FBFF
+  BorderColor #1E40AF
+  ArrowColor #334155
+}
+
+skinparam swimlane {
+  BorderColor #1E40AF
+  TitleBackgroundColor #EAF2FF
+  TitleFontColor #1E40AF
+}
+
+start
+
+|Pengunjung|
+:Buka website PMI;
+:Akses Home;
+:Pilih menu publik;
+
+|Sistem|
+:Muat data publik\n(stok darah, jadwal donor, hero slider,\nlayanan, berita terbaru, footer setting);
+:Tampilkan Home;
+
+if (Menu dipilih?) then (Berita)
+  |Pengunjung|
+  :Klik menu Berita;
+  |Sistem|
+  :Tampilkan daftar berita published;
+  |Pengunjung|
+  :Pilih detail berita;
+  |Sistem|
+  :Tampilkan detail berita + related posts;
+elseif (Profil/Markas/Donor)
+  |Pengunjung|
+  :Klik menu Profil/Markas/Donor;
+  |Sistem|
+  :Resolusi route dinamis\n/profil|markas|donor;
+  :Cek komponen Vue / fallback service;
+  if (Halaman tersedia?) then (Ya)
+    |Sistem|
+    :Tampilkan halaman statis/dinamis;
+  else (Tidak)
+    |Sistem|
+    :Tampilkan 404;
+  endif
+else (Lainnya)
+  |Sistem|
+  :Tampilkan halaman publik terkait;
+endif
+
+|Admin/Perawat|
+:Buka halaman login sesuai role;
+:Input email + password;
+
+|Sistem|
+:Validasi kredensial;
+
+if (Login valid?) then (Ya)
+  |Sistem|
+  :Identifikasi role user;
+
+  if (Role = Admin?) then (Ya)
+    |Admin|
+    :Masuk Dashboard Admin;
+    :Pilih modul manajemen;
+    |Sistem|
+    :Validasi akses middleware admin;
+    if (Modul dipilih?) then (Blood Stock)
+      |Admin|
+      :CRUD Stok Darah;
+      |Sistem|
+      :Simpan perubahan ke blood_stocks;
+    elseif (Blood Donor)
+      |Admin|
+      :CRUD Jadwal Donor;
+      |Sistem|
+      :Simpan perubahan ke blood_donors;
+    elseif (Hero Slider)
+      |Admin|
+      :CRUD Hero Slider;
+      |Sistem|
+      :Simpan perubahan ke hero_sliders;
+    elseif (Service)
+      |Admin|
+      :CRUD Layanan;
+      |Sistem|
+      :Simpan perubahan ke services;
+    elseif (Post)
+      |Admin|
+      :CRUD Berita;
+      |Sistem|
+      :Simpan perubahan ke posts;
+    elseif (Category)
+      |Admin|
+      :CRUD Kategori Berita;
+      |Sistem|
+      :Simpan perubahan ke categories;
+    elseif (User)
+      |Admin|
+      :CRUD User Internal;
+      |Sistem|
+      :Simpan perubahan ke users;
+    elseif (Site Setting)
+      |Admin|
+      :Ubah pengaturan situs;
+      |Sistem|
+      :Simpan perubahan ke site_settings;
+    elseif (Page)
+      |Admin|
+      :Ubah konten halaman statis;
+      |Sistem|
+      :Simpan perubahan ke pages;
+    else (Menu)
+      |Admin|
+      :CRUD Menu Navbar;
+      |Sistem|
+      :Simpan perubahan ke menus;
+    endif
+
+  else (Perawat)
+    |Perawat|
+    :Masuk Dashboard Perawat;
+    :Lihat ringkasan data operasional\n(donor, stok darah, kategori, layanan);
+  endif
+
+  |Admin/Perawat|
+  :Logout;
+  |Sistem|
+  :Hapus sesi login;
+  :Redirect ke Home;
+
+else (Tidak)
+  |Sistem|
+  :Tampilkan pesan login gagal;
+endif
+
+stop
+@enduml

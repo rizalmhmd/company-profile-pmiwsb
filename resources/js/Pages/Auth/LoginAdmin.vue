@@ -17,7 +17,7 @@ const submit = () => {
 <template>
     <Head title="Login Admin" />
 
-    <div class="bg-gray-100 min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="bg-gradient-to-b from-red-600 via-red-100 to-white min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-xl">
             <!-- Header -->
             <div class="text-center">
@@ -72,12 +72,21 @@ const submit = () => {
                         <p v-for="(error, key) in form.errors" :key="key">• {{ error }}</p>
                     </div>
                 </div>
+                
+                <div v-if="$page.props.flash?.error" class="rounded-lg bg-red-50 p-4 border border-red-200 mt-4">
+                    <div class="text-sm text-red-700">
+                        <p>• {{ $page.props.flash.error }}</p>
+                    </div>
+                </div>
             </form>
 
-            <!-- Back Link -->
-            <div class="text-center">
-                <Link href="/" class="text-sm text-red-600 hover:text-red-700">
-                    ← Kembali ke Beranda
+            <!-- Back Link & Other Login -->
+            <div class="text-center space-y-4 mt-6">
+                <Link href="/login/perawat" class="text-sm font-medium text-red-600 hover:text-red-700 block">
+                    Masuk sebagai Perawat &rarr;
+                </Link>
+                <Link href="/" class="text-sm text-gray-500 hover:text-gray-700 block">
+                    &larr; Kembali ke Beranda
                 </Link>
             </div>
 

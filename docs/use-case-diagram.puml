@@ -1,0 +1,83 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle stickman
+skinparam shadowing false
+skinparam linetype ortho
+
+title Use Case Diagram - Company Profile PMI WSB
+
+actor "Pengunjung" as Visitor
+actor "Admin" as Admin
+actor "Perawat" as Nurse
+
+rectangle "Sistem Company Profile PMI" {
+  usecase "Lihat Home" as UC_Home
+  usecase "Lihat Stok Darah" as UC_ViewStock
+  usecase "Lihat Jadwal\nUnit Donor" as UC_ViewSchedule
+  usecase "Lihat Hero Slider" as UC_ViewHero
+  usecase "Lihat Layanan" as UC_ViewService
+  usecase "Lihat Berita" as UC_ViewNews
+  usecase "Lihat Detail Berita" as UC_ViewNewsDetail
+  usecase "Akses Halaman Profil/\nMarkas/Donor" as UC_ViewStatic
+
+  usecase "Login Admin" as UC_LoginAdmin
+  usecase "Login Perawat" as UC_LoginNurse
+  usecase "Logout" as UC_Logout
+
+  usecase "Lihat Dashboard Admin" as UC_AdminDashboard
+  usecase "Lihat Dashboard Perawat" as UC_NurseDashboard
+
+  usecase "Kelola Stok Darah\n(CRUD)" as UC_ManageStock
+  usecase "Kelola Jadwal Donor\n(CRUD)" as UC_ManageDonor
+  usecase "Kelola Hero Slider\n(CRUD)" as UC_ManageHero
+  usecase "Kelola Layanan\n(CRUD)" as UC_ManageService
+  usecase "Kelola Berita\n(CRUD)" as UC_ManagePost
+  usecase "Kelola Kategori Berita\n(CRUD)" as UC_ManageCategory
+  usecase "Kelola User\n(CRUD)" as UC_ManageUser
+  usecase "Kelola Pengaturan Situs" as UC_ManageSetting
+  usecase "Kelola Halaman Statis" as UC_ManagePage
+  usecase "Kelola Menu Navbar\n(CRUD)" as UC_ManageMenu
+}
+
+' Public
+Visitor --> UC_Home
+Visitor --> UC_ViewStock
+Visitor --> UC_ViewSchedule
+Visitor --> UC_ViewHero
+Visitor --> UC_ViewService
+Visitor --> UC_ViewNews
+Visitor --> UC_ViewNewsDetail
+Visitor --> UC_ViewStatic
+
+' Authenticated
+Admin --> UC_LoginAdmin
+Nurse --> UC_LoginNurse
+Admin --> UC_Logout
+Nurse --> UC_Logout
+
+' Dashboard
+Admin --> UC_AdminDashboard
+Nurse --> UC_NurseDashboard
+
+' Admin-only management (/manage + middleware admin)
+Admin --> UC_ManageStock
+Admin --> UC_ManageDonor
+Admin --> UC_ManageHero
+Admin --> UC_ManageService
+Admin --> UC_ManagePost
+Admin --> UC_ManageCategory
+Admin --> UC_ManageUser
+Admin --> UC_ManageSetting
+Admin --> UC_ManagePage
+Admin --> UC_ManageMenu
+
+' Include relationships (content displayed on home/public)
+UC_Home ..> UC_ViewStock : <<include>>
+UC_Home ..> UC_ViewSchedule : <<include>>
+UC_Home ..> UC_ViewHero : <<include>>
+UC_Home ..> UC_ViewService : <<include>>
+UC_Home ..> UC_ViewNews : <<include>>
+UC_ViewNews ..> UC_ViewNewsDetail : <<extend>>
+
+@enduml

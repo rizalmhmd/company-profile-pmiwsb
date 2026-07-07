@@ -1,0 +1,196 @@
+@startuml
+title ERD - Company Profile PMI WSB
+
+hide circle
+skinparam linetype ortho
+skinparam shadowing false
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #1E40AF
+  ArrowColor #334155
+}
+
+legend right
+  == Keterangan Relasi ==
+  Garis solid  : relasi fisik (FK di migration)
+  Garis putus  : relasi logis (dipakai di aplikasi, tanpa FK langsung)
+endlegend
+
+entity "users" as users {
+  * id : bigint <<PK>>
+  --
+  name : varchar
+  email : varchar <<UNIQUE>>
+  password : varchar
+  role : varchar (admin|perawat)
+  email_verified_at : timestamp?
+  remember_token : varchar?
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "categories" as categories {
+  * id : bigint <<PK>>
+  --
+  name : varchar
+  slug : varchar <<UNIQUE>>
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "posts" as posts {
+  * id : bigint <<PK>>
+  --
+  title : varchar
+  slug : varchar <<UNIQUE>>
+  content : text
+  image : varchar?
+  category_id : bigint <<FK>>
+  is_published : boolean
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "services" as services {
+  * id : bigint <<PK>>
+  --
+  title : varchar
+  slug : varchar <<UNIQUE>>
+  description : text
+  icon : varchar?
+  image : varchar?
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "blood_donors" as blood_donors {
+  * id : bigint <<PK>>
+  --
+  name : varchar?
+  slug : varchar?
+  location : varchar
+  date : date
+  time_start : time
+  time_end : time
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "blood_stocks" as blood_stocks {
+  * id : bigint <<PK>>
+  --
+  product : varchar
+  stock_a : integer
+  stock_b : integer
+  stock_o : integer
+  stock_ab : integer
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "hero_sliders" as hero_sliders {
+  * id : bigint <<PK>>
+  --
+  image_path : varchar
+  title : varchar?
+  subtitle : varchar?
+  description : text?
+  is_active : boolean
+  order : integer
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "footer_settings" as footer_settings {
+  * id : bigint <<PK>>
+  --
+  about_pmi : text?
+  address : text?
+  phone : varchar?
+  email : varchar?
+  facebook : varchar?
+  instagram : varchar?
+  twitter : varchar?
+  youtube : varchar?
+  copyright : varchar
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "site_settings" as site_settings {
+  * id : bigint <<PK>>
+  --
+  logo : varchar?
+  favicon : varchar?
+  site_name : varchar
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "pages" as pages {
+  * id : bigint <<PK>>
+  --
+  title : varchar
+  category : varchar?
+  slug : varchar <<UNIQUE>>
+  content : longText?
+  image : varchar?
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "menus" as menus {
+  * id : bigint <<PK>>
+  --
+  name : varchar
+  url : varchar?
+  parent_id : bigint? <<FK self>>
+  order : integer
+  is_active : boolean
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+' -------------------------
+' Layout helper (agar rapi saat dirender)
+' -------------------------
+users -[hidden]down- categories
+categories -[hidden]right- posts
+posts -[hidden]right- services
+
+categories -[hidden]down- blood_stocks
+blood_stocks -[hidden]right- blood_donors
+blood_donors -[hidden]right- hero_sliders
+
+blood_stocks -[hidden]down- pages
+pages -[hidden]right- menus
+menus -[hidden]right- site_settings
+site_settings -[hidden]right- footer_settings
+
+' Relasi utama dari migration/model
+categories ||--o{ posts : "categories.id = posts.category_id"
+menus ||--o{ menus : "parent_id (self relation)"
+
+' Relasi logis (non-FK) agar ERD lebih terhubung seperti contoh
+posts ..> users : "dikelola oleh admin"
+services ..> users : "dikelola oleh admin"
+blood_stocks ..> users : "dikelola oleh admin"
+blood_donors ..> users : "dikelola oleh admin"
+hero_sliders ..> users : "dikelola oleh admin"
+footer_settings ..> users : "dikelola oleh admin"
+site_settings ..> users : "dikelola oleh admin"
+pages ..> users : "dikelola oleh admin"
+menus ..> pages : "navigasi ke halaman"
+menus ..> services : "navigasi ke layanan"
+
+note bottom of users
+  users dipakai untuk autentikasi
+  role: admin / perawat.
+end note
+
+note bottom of pages
+  Digunakan sebagai konten halaman statis/dinamis
+  untuk route profil/markas/donor.
+end note
+
+@enduml

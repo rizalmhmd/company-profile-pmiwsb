@@ -1,0 +1,117 @@
+@startuml
+title Sequence Diagram - Company Profile PMI WSB
+
+skinparam shadowing false
+skinparam linetype ortho
+skinparam sequence {
+  ArrowColor #334155
+  LifeLineBorderColor #1E40AF
+  LifeLineBackgroundColor #EFF6FF
+  ParticipantBorderColor #1E40AF
+  ParticipantBackgroundColor #FFFFFF
+}
+
+actor "Pengunjung" as Visitor
+actor "Admin" as Admin
+actor "Perawat" as Nurse
+
+participant "Frontend\n(Inertia Vue)" as FE
+participant "Route\n(web.php)" as Route
+participant "AuthController" as AuthC
+participant "DashboardController" as DashC
+participant "Admin Controller\n(BloodStock/Post/Menu/dll)" as AdminC
+
+database "users" as TUsers
+database "blood_stocks" as TBloodStock
+database "blood_donors" as TBloodDonor
+database "hero_sliders" as THero
+database "services" as TService
+database "posts" as TPost
+database "categories" as TCategory
+database "pages" as TPage
+database "menus" as TMenu
+database "footer_settings" as TFooter
+
+== 1) Akses Home (Publik) ==
+Visitor -> FE : Buka "/"
+FE -> Route : GET /
+Route -> TBloodStock : ambil stok darah
+Route -> TBloodDonor : ambil jadwal donor
+Route -> TFooter : ambil footer
+Route -> THero : ambil hero slider aktif
+Route -> TService : ambil layanan
+Route -> TPost : ambil 3 berita terbaru (published)
+Route --> FE : render Home + data publik
+FE --> Visitor : tampil halaman Home
+
+== 2) Login Berdasarkan Role ==
+alt Login Admin
+  Admin -> FE : submit login admin
+  FE -> Route : POST /login/admin
+  Route -> AuthC : storeAdminLogin(request)
+  AuthC -> TUsers : verifikasi email/password
+  alt kredensial valid & role admin
+    AuthC --> FE : redirect /dashboard/admin
+  else gagal / role tidak sesuai
+    AuthC --> FE : error login
+  end
+else Login Perawat
+  Nurse -> FE : submit login perawat
+  FE -> Route : POST /login/perawat
+  Route -> AuthC : storePerawatLogin(request)
+  AuthC -> TUsers : verifikasi email/password
+  alt kredensial valid & role perawat
+    AuthC --> FE : redirect /dashboard/perawat
+  else gagal / role tidak sesuai
+    AuthC --> FE : error login
+  end
+end
+
+== 3) Dashboard ==
+alt Dashboard Admin
+  Admin -> FE : akses dashboard admin
+  FE -> Route : GET /dashboard/admin
+  Route -> DashC : admin()
+  DashC -> TUsers : hitung user & perawat
+  DashC -> TBloodStock : hitung total stok darah
+  DashC -> TPost : hitung total berita
+  DashC --> FE : data dashboard admin
+else Dashboard Perawat
+  Nurse -> FE : akses dashboard perawat
+  FE -> Route : GET /dashboard/perawat
+  Route -> DashC : perawat()
+  DashC -> TBloodDonor : hitung donor
+  DashC -> TBloodStock : hitung total stok
+  DashC -> TCategory : hitung kategori
+  DashC -> TService : hitung layanan
+  DashC --> FE : data dashboard perawat
+end
+
+== 4) Contoh CRUD Admin (modul /manage) ==
+Admin -> FE : buka modul manajemen
+FE -> Route : GET /manage/{modul}
+Route -> AdminC : index()
+AdminC --> FE : daftar data modul
+
+Admin -> FE : simpan data baru
+FE -> Route : POST /manage/{modul}
+Route -> AdminC : store(request)
+AdminC -> AdminC : validasi input
+AdminC -> TPost : insert/update/delete
+AdminC --> FE : redirect + flash success
+
+note right of AdminC
+  Pola CRUD serupa dipakai untuk:
+  blood-stocks, blood-donors,
+  hero-sliders, services, posts,
+  categories, users, pages, menus,
+  site-setting.
+end note
+
+== 5) Logout ==
+Admin -> FE : klik logout
+FE -> Route : POST /logout
+Route -> AuthC : logout(request)
+AuthC --> FE : redirect "/"
+
+@enduml
