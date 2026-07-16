@@ -22,6 +22,85 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\MenuController;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
+
+// Route untuk memperbaiki link storage secara permanen (tanpa symlink) dan memindahkan ke folder uploads
+Route::get('/fix-storage', function () {
+    try {
+        $publicUploads = public_path('uploads');
+        $appStorage = storage_path('app/public');
+        $oldStorage = public_path('storage');
+
+        // Hapus symlink atau file jika sudah ada
+        if (is_link($oldStorage) || is_file($oldStorage)) {
+            unlink($oldStorage);
+        }
+
+        // Buat folder uploads di public jika belum ada
+        if (!is_dir($publicUploads)) {
+            mkdir($publicUploads, 0777, true);
+        }
+
+        // Clear config cache so the new filesystems.php config is used
+        Artisan::call('config:clear');
+        Artisan::call('cache:clear');
+
+        // Copy semua file dari storage/app/public ke public/uploads (agar gambar lama tidak hilang)
+        if (is_dir($appStorage)) {
+            File::copyDirectory($appStorage, $publicUploads);
+        }
+
+        // Jika folder public/storage ada dan itu adalah folder asli (bukan symlink), copy juga isinya
+        if (is_dir($oldStorage)) {
+            File::copyDirectory($oldStorage, $publicUploads);
+        }
+
+        return 'Storage folder set up successfully & Cache cleared! Gambar Anda sudah aman (dipindah ke folder uploads). Silakan cek ulang.';
+    } catch (\Exception $e) {
+        return 'Error: ' . $e->getMessage();
+    }
+});
+
+// Fallback route untuk melayani file gambar jika server Alwaysdata tidak bisa melayaninya langsung
+Route::get('/uploads/{path}', function ($path) {
+    $filePath = public_path('uploads/' . $path);
+    if (file_exists($filePath)) {
+        return response()->file($filePath);
+    }
+    abort(404);
+})->where('path', '.*');
+
+Route::get('/debug-storage', function () {
+    $out = "<h3>Debug Storage</h3>";
+    $out .= "<b>public_path('uploads/hero-sliders')</b><br>";
+    $publicDir = public_path('uploads/hero-sliders');
+    if (is_dir($publicDir)) {
+        $files = scandir($publicDir);
+        foreach ($files as $f) {
+            if ($f !== '.' && $f !== '..') {
+                $url = asset('uploads/hero-sliders/' . $f);
+                $out .= "<a href='$url'>$f</a> - Size: " . filesize($publicDir . '/' . $f) . " bytes<br>";
+            }
+        }
+    } else {
+        $out .= "Directory not found.<br>";
+    }
+    
+    $out .= "<br><b>storage_path('app/public/hero-sliders')</b><br>";
+    $appDir = storage_path('app/public/hero-sliders');
+    if (is_dir($appDir)) {
+        $files = scandir($appDir);
+        foreach ($files as $f) {
+            if ($f !== '.' && $f !== '..') {
+                $out .= "$f - Size: " . filesize($appDir . '/' . $f) . " bytes<br>";
+            }
+        }
+    } else {
+        $out .= "Directory not found.<br>";
+    }
+    return $out;
+});
 
 Route::get('/', function () {
     return Inertia::render('Home', [

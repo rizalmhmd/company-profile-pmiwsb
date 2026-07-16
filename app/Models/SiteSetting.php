@@ -16,11 +16,11 @@ class SiteSetting extends Model
 
     public function getLogoUrlAttribute()
     {
-        return $this->logo ? asset('storage/' . $this->logo) : null;
+        return $this->logo ? asset('uploads/' . $this->logo) : null;
     }
 
     public function getFaviconUrlAttribute()
     {
-        return $this->favicon ? asset('storage/' . $this->favicon) : null;
+        return $this->favicon ? asset('uploads/' . $this->favicon) : null;
     }
 }

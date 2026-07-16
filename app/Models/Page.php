@@ -16,6 +16,6 @@ class Page extends Model
 
     public function getImageUrlAttribute()
     {
-        return $this->image ? asset('storage/' . $this->image) : null;
+        return $this->image ? asset('uploads/' . $this->image) : null;
     }
 }

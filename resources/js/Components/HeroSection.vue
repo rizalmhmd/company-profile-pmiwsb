@@ -55,7 +55,7 @@ const defaultImage = "https://images.unsplash.com/photo-1584432810601-6c7f27d236
 
 const getImageUrl = (path) => {
     if (props.imageUrl) return props.imageUrl;
-    return path ? (path.startsWith('http') ? path : `/storage/${path}`) : defaultImage;
+    return path ? (path.startsWith('http') ? path : `/uploads/${path}`) : defaultImage;
 };
 </script>
 
