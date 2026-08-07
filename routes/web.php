@@ -22,6 +22,9 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\QueueDisplayController;
+use App\Http\Controllers\Admin\QueueController;
+use App\Http\Controllers\Admin\QueueSettingController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 
@@ -206,8 +209,24 @@ Route::middleware('auth')->group(function () {
             'update'  => 'menus.update',
             'destroy' => 'menus.destroy',
         ]);
+
+        // Pengaturan Layar Antrian
+        Route::get('/queue-settings', [QueueSettingController::class, 'index'])->name('queue-settings.index');
+        Route::post('/queue-settings', [QueueSettingController::class, 'update'])->name('queue-settings.update');
+    });
+
+    // Perawat & Admin Route for Managing Queues
+    Route::middleware('role:admin,perawat')->prefix('manage')->name('admin.')->group(function () {
+        Route::get('/queues', [QueueController::class, 'index'])->name('queues.index');
+        Route::post('/queues', [QueueController::class, 'store'])->name('queues.store');
+        Route::post('/queues/{queue}/call', [QueueController::class, 'call'])->name('queues.call');
+        Route::post('/queues/{queue}/finish', [QueueController::class, 'finish'])->name('queues.finish');
     });
 });
+
+// TV Display Antrian
+Route::get('/antrian/display', [QueueDisplayController::class, 'index'])->name('antrian.display');
+Route::get('/antrian/data', [QueueDisplayController::class, 'data'])->name('antrian.data');
 
 // Berita Routes (Public UI)
 Route::get('/berita', function () {
