@@ -1,13 +1,23 @@
 <script setup>
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 const props = defineProps({ title: String });
 const page = usePage();
 const user = computed(() => page.props.auth.user);
-const flash = computed(() => page.props.flash);
 
 const isSidebarOpen = ref(false);
+
+const flashMessage = ref({ success: null, error: null });
+
+watch(() => page.props.flash, (newFlash) => {
+    if (newFlash?.success || newFlash?.error) {
+        flashMessage.value = { success: newFlash.success, error: newFlash.error };
+        setTimeout(() => {
+            flashMessage.value = { success: null, error: null };
+        }, 3000);
+    }
+}, { immediate: true, deep: true });
 
 const toggleSidebar = () => {
     isSidebarOpen.value = !isSidebarOpen.value;
@@ -151,18 +161,23 @@ const isActive = (href) => (page.url.startsWith(href) && href !== '/dashboard/ad
             </header>
 
             <!-- Flash Messages -->
-            <div v-if="flash?.success" class="mx-6 mt-4 p-4 bg-green-50 border border-green-200 text-green-800 rounded-xl flex items-center gap-3 flex-shrink-0">
-                <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <p class="text-sm font-medium">{{ flash.success }}</p>
-            </div>
-            <div v-if="flash?.error" class="mx-6 mt-4 p-4 bg-red-50 border border-red-200 text-red-800 rounded-xl flex items-center gap-3 flex-shrink-0">
-                <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <p class="text-sm font-medium">{{ flash.error }}</p>
-            </div>
+            <transition leave-active-class="transition ease-in duration-500" leave-from-class="opacity-100" leave-to-class="opacity-0">
+                <div v-if="flashMessage.success" class="mx-6 mt-4 p-4 bg-green-50 border border-green-200 text-green-800 rounded-xl flex items-center gap-3 flex-shrink-0 shadow-sm">
+                    <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p class="text-sm font-medium">{{ flashMessage.success }}</p>
+                </div>
+            </transition>
+            
+            <transition leave-active-class="transition ease-in duration-500" leave-from-class="opacity-100" leave-to-class="opacity-0">
+                <div v-if="flashMessage.error" class="mx-6 mt-4 p-4 bg-red-50 border border-red-200 text-red-800 rounded-xl flex items-center gap-3 flex-shrink-0 shadow-sm">
+                    <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p class="text-sm font-medium">{{ flashMessage.error }}</p>
+                </div>
+            </transition>
 
             <!-- Page Content -->
             <main class="flex-1 overflow-y-auto p-6 bg-white/35">

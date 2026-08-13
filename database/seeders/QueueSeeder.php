@@ -16,10 +16,10 @@ class QueueSeeder extends Seeder
     public function run(): void
     {
         $counters = [
-            ['name' => 'Poli Umum', 'type' => 'poli'],
-            ['name' => 'Poli Gigi', 'type' => 'poli'],
-            ['name' => 'Poli Anak', 'type' => 'poli'],
-            ['name' => 'Poli KIA/KB', 'type' => 'poli'], // Placeholder for the 4th
+            ['name' => 'Poli Umum', 'type' => 'poli', 'prefix' => 'A'],
+            ['name' => 'Poli Gigi', 'type' => 'poli', 'prefix' => 'B'],
+            ['name' => 'Poli Anak', 'type' => 'poli', 'prefix' => 'C'],
+            ['name' => 'Poli KIA/KB', 'type' => 'poli', 'prefix' => 'D'], // Placeholder for the 4th
         ];
 
         foreach ($counters as $counter) {

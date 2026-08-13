@@ -218,9 +218,19 @@ Route::middleware('auth')->group(function () {
     // Perawat & Admin Route for Managing Queues
     Route::middleware('role:admin,perawat')->prefix('manage')->name('admin.')->group(function () {
         Route::get('/queues', [QueueController::class, 'index'])->name('queues.index');
-        Route::post('/queues', [QueueController::class, 'store'])->name('queues.store');
+        Route::post('/queues/import', [QueueController::class, 'import'])->name('queues.import');
+        Route::get('/queues/export', [QueueController::class, 'export'])->name('queues.export');
+        Route::post('/queues/export-sheets', [QueueController::class, 'exportToSheets'])->name('queues.exportSheets');
+        Route::post('/queues/bulk-delete', [QueueController::class, 'destroyBulk'])->name('queues.destroyBulk');
+        Route::delete('/queues/clear', [QueueController::class, 'clear'])->name('queues.clear');
+        Route::post('/queues/manual-add', [QueueController::class, 'manualAdd'])->name('queues.manual-add');
+        Route::post('/queues/call-next-global', [QueueController::class, 'callNextGlobal'])->name('queues.callNextGlobal');
+        Route::post('/queues/finish-call-next-global', [QueueController::class, 'finishAndCallNextGlobal'])->name('queues.finishAndCallNextGlobal');
+        Route::post('/queues/{counter}/call-next', [QueueController::class, 'callNext'])->name('queues.callNext');
         Route::post('/queues/{queue}/call', [QueueController::class, 'call'])->name('queues.call');
         Route::post('/queues/{queue}/finish', [QueueController::class, 'finish'])->name('queues.finish');
+        Route::put('/queues/{queue}', [QueueController::class, 'update'])->name('queues.update');
+        Route::delete('/queues/{queue}', [QueueController::class, 'destroy'])->name('queues.destroy');
     });
 });
 

@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder
             PageSeeder::class,
             MenuSeeder::class,
             FooterSettingSeeder::class,
+            QueueSeeder::class,
         ]);
     }
 }
