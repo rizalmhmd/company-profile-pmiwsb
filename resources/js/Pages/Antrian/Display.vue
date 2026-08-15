@@ -104,7 +104,7 @@
                         </div>
                     </div>
 
-                    <div class="flex-1 flex flex-col gap-4 overflow-hidden">
+                    <div class="flex-1 flex flex-col gap-4 overflow-y-auto custom-scrollbar pr-2">
                         <div v-for="(queue, i) in recentQueues" :key="queue.id || i" 
                              class="bg-white rounded-2xl shadow-[0_10px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col overflow-hidden group hover:-translate-y-1 transition-transform">
                             <div class="bg-slate-50 px-5 py-3 border-b border-slate-100 flex justify-between items-center">
@@ -303,6 +303,27 @@ onUnmounted(() => {
 </script>
 
 <style>
+/* Custom Scrollbar Styles */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1; /* slate-300 */
+    border-radius: 20px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8; /* slate-400 */
+}
+
+/* Firefox support */
+.custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+
 @keyframes marquee {
   0% { transform: translateX(0%); }
   100% { transform: translateX(-33.33%); }
