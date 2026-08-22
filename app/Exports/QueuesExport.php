@@ -23,7 +23,6 @@ class QueuesExport implements FromCollection, WithHeadings, WithMapping
         return [
             $queue->patient_name,
             $queue->counter ? $queue->counter->name : '',
-            $queue->queue_number,
             $queue->status,
             $queue->created_at->format('Y-m-d H:i:s'),
         ];
@@ -34,7 +33,6 @@ class QueuesExport implements FromCollection, WithHeadings, WithMapping
         return [
             'Nama',
             'Poli',
-            'Nomor Antrian',
             'Status',
             'Waktu Masuk',
         ];

@@ -26,20 +26,30 @@ class QueueDisplayController extends Controller
             ->latest('updated_at')
             ->first();
 
-        // 5 antrian terakhir (selain yang sedang dipanggil) dari berbagai poli
-        $recentQueuesQuery = Queue::with('counter')
+        // 2 antrian sebelumnya (selain yang sedang dipanggil)
+        $previousQueuesQuery = Queue::with('counter')
             ->where('status', '!=', 'waiting')
+            ->where('created_at', '>=', \Carbon\Carbon::today())
             ->latest('updated_at');
         
         if ($callingQueue) {
-            $recentQueuesQuery->where('id', '!=', $callingQueue->id);
+            $previousQueuesQuery->where('id', '!=', $callingQueue->id);
         }
 
-        $recentQueues = $recentQueuesQuery->take(5)->get();
+        $previousQueues = $previousQueuesQuery->take(2)->get();
+
+        // 2 antrian selanjutnya (yang sedang menunggu)
+        $nextQueues = Queue::with('counter')
+            ->where('status', 'waiting')
+            ->where('created_at', '>=', \Carbon\Carbon::today())
+            ->orderBy('id', 'asc')
+            ->take(2)
+            ->get();
 
         return response()->json([
             'calling' => $callingQueue,
-            'recent' => $recentQueues,
+            'previous' => $previousQueues,
+            'next' => $nextQueues,
             'settings' => QueueDisplaySetting::first(),
         ]);
     }

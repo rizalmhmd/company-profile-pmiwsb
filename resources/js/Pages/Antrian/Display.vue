@@ -1,6 +1,7 @@
 <template>
     <Head title="Display Antrian" />
     <div class="min-h-screen bg-slate-100 flex flex-col font-sans overflow-hidden relative">
+        
         <!-- Background Blobs -->
         <div class="absolute top-[-10%] right-[10%] w-[40%] h-[50%] bg-rose-200/40 rounded-full mix-blend-multiply filter blur-[80px] animate-blob z-0 pointer-events-none"></div>
         <div class="absolute bottom-[-10%] right-[-5%] w-[40%] h-[50%] bg-red-200/40 rounded-full mix-blend-multiply filter blur-[80px] animate-blob z-0 pointer-events-none" style="animation-delay: 2s;"></div>
@@ -95,38 +96,50 @@
                     </div>
                 </div>
 
-                <!-- Recent Queues Sidebar -->
-                <div class="w-full xl:w-96 flex flex-col gap-4">
-                    <div class="bg-white/80 backdrop-blur-xl rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center justify-between">
-                        <span class="font-black text-slate-800 tracking-wide">Antrian Sebelumnya</span>
-                        <div class="w-8 h-8 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <!-- Right Sidebar -->
+                <div class="w-full xl:w-96 flex flex-col gap-3">
+                    
+                    <!-- Antrian Selanjutnya -->
+                    <div class="bg-white/80 backdrop-blur-xl rounded-2xl p-4 shadow-sm border border-slate-100 flex items-center justify-between">
+                        <span class="font-black text-slate-800 tracking-wide text-sm">Antrian Selanjutnya</span>
+                        <div class="w-6 h-6 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <div v-for="(queue, i) in nextQueues" :key="'next-'+queue.id" class="bg-white rounded-xl shadow-[0_5px_15px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col overflow-hidden">
+                            <div class="bg-slate-50 px-4 py-2 border-b border-slate-100 flex justify-between items-center">
+                                <span class="text-[10px] font-black text-slate-600 uppercase tracking-widest line-clamp-1">{{ queue?.counter?.name || 'Nama Poli' }}</span>
+                            </div>
+                            <div class="px-4 py-2.5 flex items-center justify-between bg-white relative overflow-hidden">
+                                <span class="text-slate-400 text-xs font-bold uppercase relative z-10 w-1/3">Nama</span>
+                                <span class="text-rose-600 font-black text-lg md:text-xl relative z-10 text-right w-2/3 truncate" :title="queue?.patient_name">{{ queue?.patient_name || '---' }}</span>
+                            </div>
+                        </div>
+                        <div v-if="nextQueues.length === 0" class="bg-white/40 backdrop-blur-sm rounded-xl border border-slate-100 flex flex-col overflow-hidden opacity-60">
+                            <div class="px-4 py-4 text-center text-slate-400 text-xs font-bold uppercase">Belum ada</div>
                         </div>
                     </div>
 
-                    <div class="flex-1 flex flex-col gap-4 overflow-y-auto custom-scrollbar pr-2">
-                        <div v-for="(queue, i) in recentQueues" :key="queue.id || i" 
-                             class="bg-white rounded-2xl shadow-[0_10px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col overflow-hidden group hover:-translate-y-1 transition-transform">
-                            <div class="bg-slate-50 px-5 py-3 border-b border-slate-100 flex justify-between items-center">
-                                <span class="text-xs font-black text-slate-600 uppercase tracking-widest line-clamp-1">{{ queue?.counter?.name || 'Nama Poli' }}</span>
+                    <!-- Antrian Sebelumnya -->
+                    <div class="bg-white/80 backdrop-blur-xl rounded-2xl p-4 shadow-sm border border-slate-100 flex items-center justify-between mt-2">
+                        <span class="font-black text-slate-800 tracking-wide text-sm">Antrian Sebelumnya</span>
+                        <div class="w-6 h-6 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <div v-for="(queue, i) in previousQueues" :key="'prev-'+queue.id" class="bg-white rounded-xl shadow-[0_5px_15px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col overflow-hidden">
+                            <div class="bg-slate-50 px-4 py-2 border-b border-slate-100 flex justify-between items-center">
+                                <span class="text-[10px] font-black text-slate-600 uppercase tracking-widest line-clamp-1">{{ queue?.counter?.name || 'Nama Poli' }}</span>
                             </div>
-                            <div class="px-5 py-4 flex items-center justify-between bg-white relative overflow-hidden">
-                                <div class="absolute inset-0 bg-gradient-to-r from-transparent to-rose-50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <span class="text-slate-400 text-sm font-bold uppercase relative z-10 w-1/3">Nama</span>
-                                <span class="text-rose-600 font-black text-xl md:text-2xl relative z-10 text-right w-2/3 truncate" :title="queue?.patient_name">{{ queue?.patient_name || '---' }}</span>
+                            <div class="px-4 py-2.5 flex items-center justify-between bg-white relative overflow-hidden">
+                                <span class="text-slate-400 text-xs font-bold uppercase relative z-10 w-1/3">Nama</span>
+                                <span class="text-rose-600 font-black text-lg md:text-xl relative z-10 text-right w-2/3 truncate" :title="queue?.patient_name">{{ queue?.patient_name || '---' }}</span>
                             </div>
                         </div>
-                        
-                        <!-- Empty states -->
-                        <div v-for="n in Math.max(0, defaultPolis.length - (recentQueues?.length || 0))" :key="'empty'+n" 
-                             class="bg-white/40 backdrop-blur-sm rounded-2xl border border-slate-100 flex flex-col overflow-hidden opacity-60">
-                            <div class="bg-slate-50/50 px-5 py-3 border-b border-slate-100">
-                                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest line-clamp-1">{{ defaultPolis[recentQueues?.length + n - 1] || 'Nama Poli' }}</span>
-                            </div>
-                            <div class="px-5 py-4 flex items-center justify-between">
-                                <span class="text-slate-400 text-sm font-bold uppercase">Nama</span>
-                                <span class="text-slate-300 font-black text-2xl text-right">---</span>
-                            </div>
+                        <div v-if="previousQueues.length === 0" class="bg-white/40 backdrop-blur-sm rounded-xl border border-slate-100 flex flex-col overflow-hidden opacity-60">
+                            <div class="px-4 py-4 text-center text-slate-400 text-xs font-bold uppercase">Belum ada</div>
                         </div>
                     </div>
                 </div>
@@ -158,6 +171,7 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import axios from 'axios';
 import { Head } from '@inertiajs/vue3';
+import * as googleTTS from 'google-tts-api';
 
 const props = defineProps({
     settings: Object,
@@ -167,7 +181,8 @@ const props = defineProps({
 const currentTime = ref('');
 const currentDate = ref('');
 const activeCalling = ref(null);
-const recentQueues = ref([]);
+const nextQueues = ref([]);
+const previousQueues = ref([]);
 const displaySettings = ref(props.settings || {});
 const isFullscreen = ref(false);
 const isPulsing = ref(false);
@@ -211,8 +226,8 @@ const fetchData = async () => {
         
         const newCalling = response.data.calling;
         
-        // Cek jika ada antrian baru yang dipanggil
-        if (newCalling && (!activeCalling.value || activeCalling.value.id !== newCalling.id || activeCalling.value.status !== newCalling.status)) {
+        // Cek jika ada antrian baru yang dipanggil atau antrian yang sama dipanggil ulang (updated_at berubah)
+        if (newCalling && (!activeCalling.value || activeCalling.value.id !== newCalling.id || activeCalling.value.status !== newCalling.status || activeCalling.value.updated_at !== newCalling.updated_at)) {
             activeCalling.value = newCalling;
             speakQueue(newCalling);
             
@@ -226,7 +241,8 @@ const fetchData = async () => {
             activeCalling.value = null;
         }
 
-        recentQueues.value = response.data.recent;
+        nextQueues.value = response.data.next || [];
+        previousQueues.value = response.data.previous || [];
         
         if (response.data.settings) {
             displaySettings.value = response.data.settings;
@@ -238,26 +254,22 @@ const fetchData = async () => {
 
 // Text-to-Speech Logic
 const speakQueue = (queue) => {
-    if (!window.speechSynthesis) return;
     if (queue.status !== 'calling') return;
 
     const text = `Panggilan kepada pasien bernama, ${queue.patient_name || 'Pasien'}, Silakan menuju ke, ${queue.counter?.name}`;
     
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'id-ID';
-    utterance.rate = 0.9;
-    utterance.pitch = 1;
-
-    // Memaksa browser untuk menggunakan suara bahasa Indonesia
-    const voices = window.speechSynthesis.getVoices();
-    const indonesianVoice = voices.find(voice => voice.lang === 'id-ID' || voice.lang === 'id_ID' || voice.name.toLowerCase().includes('indonesia'));
-    
-    if (indonesianVoice) {
-        utterance.voice = indonesianVoice;
+    try {
+        const url = googleTTS.getAudioUrl(text, {
+            lang: 'id',
+            slow: false,
+            host: 'https://translate.google.com',
+        });
+        
+        const audio = new Audio(url);
+        audio.play().catch(e => console.error("Gagal memutar audio TTS:", e));
+    } catch (err) {
+        console.error("Gagal membuat URL TTS:", err);
     }
-
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
 };
 
 const mediaUrl = computed(() => displaySettings.value?.video_url);
@@ -298,7 +310,6 @@ onMounted(() => {
 onUnmounted(() => {
     if (intervalId) clearInterval(intervalId);
     if (clockInterval) clearInterval(clockInterval);
-    if (window.speechSynthesis) window.speechSynthesis.cancel();
 });
 </script>
 

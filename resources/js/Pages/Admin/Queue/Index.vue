@@ -205,6 +205,10 @@ const handleEditSubmit = () => {
                         <h2 class="text-3xl md:text-5xl font-black text-white leading-tight mb-3 truncate" :title="dashboard_stats.global_calling.patient_name">{{ dashboard_stats.global_calling.patient_name || 'Tidak ada' }}</h2>
                         <div class="flex flex-wrap items-center gap-3">
                             <span class="inline-block bg-white text-rose-700 px-4 py-1.5 rounded-full text-sm font-black uppercase tracking-wider">{{ dashboard_stats.global_calling.counter?.name || '-' }}</span>
+                            <button @click="callQueue(dashboard_stats.global_calling.id)" class="inline-flex items-center gap-1.5 bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition border border-white/30" title="Panggil Ulang Pasien">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+                                Panggil
+                            </button>
                             <button @click="finishAndCallNextGlobal" class="inline-flex items-center gap-1.5 bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition border border-white/30" title="Tandai Selesai (Hadir)">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                 Selesai

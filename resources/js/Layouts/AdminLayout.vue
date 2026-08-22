@@ -8,16 +8,27 @@ const user = computed(() => page.props.auth.user);
 
 const isSidebarOpen = ref(false);
 
-const flashMessage = ref({ success: null, error: null });
+const flashMessage = ref({ success: null, error: null, url: null });
+let flashTimeout = null;
 
 watch(() => page.props.flash, (newFlash) => {
     if (newFlash?.success || newFlash?.error) {
-        flashMessage.value = { success: newFlash.success, error: newFlash.error };
-        setTimeout(() => {
-            flashMessage.value = { success: null, error: null };
-        }, 3000);
+        if (flashTimeout) clearTimeout(flashTimeout);
+        flashMessage.value = { success: newFlash.success, error: newFlash.error, url: newFlash.url };
+        
+        // Hanya autoclose jika TIDAK ADA url/link Google Sheets
+        if (!newFlash.url) {
+            flashTimeout = setTimeout(() => {
+                flashMessage.value = { success: null, error: null, url: null };
+            }, 5000);
+        }
     }
 }, { immediate: true, deep: true });
+
+const closeFlash = () => {
+    if (flashTimeout) clearTimeout(flashTimeout);
+    flashMessage.value = { success: null, error: null, url: null };
+};
 
 const toggleSidebar = () => {
     isSidebarOpen.value = !isSidebarOpen.value;
@@ -162,11 +173,19 @@ const isActive = (href) => (page.url.startsWith(href) && href !== '/dashboard/ad
 
             <!-- Flash Messages -->
             <transition leave-active-class="transition ease-in duration-500" leave-from-class="opacity-100" leave-to-class="opacity-0">
-                <div v-if="flashMessage.success" class="mx-6 mt-4 p-4 bg-green-50 border border-green-200 text-green-800 rounded-xl flex items-center gap-3 flex-shrink-0 shadow-sm">
+                <div v-if="flashMessage.success" class="mx-6 mt-4 p-4 bg-green-50 border border-green-200 text-green-800 rounded-xl flex items-center gap-3 flex-shrink-0 shadow-sm relative pr-12">
                     <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    <p class="text-sm font-medium">{{ flashMessage.success }}</p>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium">{{ flashMessage.success }}</p>
+                        <a v-if="flashMessage.url" :href="flashMessage.url" target="_blank" class="text-xs font-bold text-green-700 hover:text-green-900 underline mt-1 inline-block">Buka Google Sheets &rarr;</a>
+                    </div>
+                    <button v-if="flashMessage.url" @click="closeFlash" class="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-green-600 hover:bg-green-100 transition" title="Tutup">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
                 </div>
             </transition>
             

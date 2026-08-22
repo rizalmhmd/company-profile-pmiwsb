@@ -178,7 +178,11 @@ class QueueController extends Controller
             // Tulis data baru
             $result = $service->spreadsheets_values->update($sheetId, $range, $body, $params);
 
-            return redirect()->back()->with('success', 'Data antrian berhasil dikirim ke tab baru di Google Sheets.');
+            $sheetUrl = "https://docs.google.com/spreadsheets/d/" . $sheetId . "/edit";
+
+            return redirect()->back()
+                ->with('success', 'Data antrian berhasil dikirim ke tab baru di Google Sheets.')
+                ->with('url', $sheetUrl);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal mengirim ke Google Sheets: ' . $e->getMessage());
         }
@@ -241,7 +245,7 @@ class QueueController extends Controller
 
         if ($nextQueue) {
             $nextQueue->update(['status' => 'calling', 'is_skipped' => false]);
-            return redirect()->back()->with('success', 'Memanggil antrian ' . $nextQueue->queue_number);
+            return redirect()->back()->with('success', 'Memanggil antrian pasien: ' . $nextQueue->patient_name);
         }
 
         return redirect()->back()->with('error', 'Tidak ada antrian yang menunggu di ' . $counter->name);
@@ -253,8 +257,9 @@ class QueueController extends Controller
         // or just let them be and TV display takes the latest.
         // Let's set the current one to calling.
         $queue->update(['status' => 'calling', 'is_skipped' => false]);
+        $queue->touch(); // Force update timestamp so display can detect recall
 
-        return redirect()->back()->with('success', 'Memanggil antrian ' . $queue->queue_number);
+        return redirect()->back()->with('success', 'Memanggil antrian pasien: ' . $queue->patient_name);
     }
 
     public function finish(Queue $queue)
