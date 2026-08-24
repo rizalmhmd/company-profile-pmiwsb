@@ -3,9 +3,14 @@ import MainLayout from '@/Layouts/MainLayout.vue';
 import { Head, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import HeroSection from '@/Components/HeroSection.vue';
+import DynamicPageContent from '@/Components/DynamicPageContent.vue';
 
 const props = defineProps({
     pageData: Object,
+    bloodStocks: {
+        type: Array,
+        default: () => []
+    },
 });
 </script>
 
@@ -25,22 +30,52 @@ const props = defineProps({
             </div>
         </div>
 
-        <div class="container mx-auto px-4 py-16 -mt-8 relative z-20">
-            <div class="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-gray-100 text-center max-w-3xl mx-auto backdrop-blur-sm bg-white/90">
-                <div class="inline-flex items-center justify-center w-20 h-20 bg-red-50 text-red-600 rounded-2xl mb-6 shadow-sm border border-red-100">
-                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+        <!-- Stok Darah Data Section -->
+        <div class="container mx-auto px-4 py-8 relative z-20">
+            <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl border-t-8 border-green-500 relative">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white shadow-lg border-4 border-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-800 mb-3">Konten Segera Hadir</h2>
-                <p class="text-gray-500 text-lg">
-                    Konten untuk halaman <span class="font-bold text-red-600">Stok Darah</span> sedang dipersiapkan oleh administrator. 
-                </p>
-                <div class="mt-8 pt-8 border-t border-gray-100">
-                    <a href="/" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-50 text-gray-700 rounded-xl font-medium hover:bg-gray-100 hover:text-red-600 transition-colors border border-gray-200">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                        Kembali ke Beranda
-                    </a>
+                <div class="p-8 pt-12">
+                    <h3 class="text-3xl font-bold text-center mb-8 text-gray-800">Tabel Stok Darah</h3>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse border border-gray-200 text-center">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th rowspan="2" class="border border-gray-200 p-2 font-bold text-sm">Produk</th>
+                                    <th colspan="4" class="border border-gray-200 p-2 font-bold text-sm">Golongan Darah</th>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <th class="border border-gray-200 p-2 font-bold text-sm">A</th>
+                                    <th class="border border-gray-200 p-2 font-bold text-sm">B</th>
+                                    <th class="border border-gray-200 p-2 font-bold text-sm">O</th>
+                                    <th class="border border-gray-200 p-2 font-bold text-sm">AB</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="stock in bloodStocks" :key="stock.id" class="hover:bg-gray-50 transition">
+                                    <td class="border border-gray-200 p-3 font-bold text-gray-600">{{ stock.product }}</td>
+                                    <td class="border border-gray-200 p-3 font-semibold text-lg" :class="{'text-red-500': stock.stock_a < 5}">{{ stock.stock_a }}</td>
+                                    <td class="border border-gray-200 p-3 font-semibold text-lg" :class="{'text-red-500': stock.stock_b < 5}">{{ stock.stock_b }}</td>
+                                    <td class="border border-gray-200 p-3 font-semibold text-lg" :class="{'text-red-500': stock.stock_o < 5}">{{ stock.stock_o }}</td>
+                                    <td class="border border-gray-200 p-3 font-semibold text-lg" :class="{'text-red-500': stock.stock_ab < 5}">{{ stock.stock_ab }}</td>
+                                </tr>
+                                <tr v-if="bloodStocks.length === 0">
+                                    <td colspan="5" class="p-8 text-gray-400 italic">Data stok darah belum tersedia</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-4 text-[10px] text-gray-400 space-y-1 text-center">
+                        <p>*Stok darah bisa berubah setiap saat.</p>
+                    </div>
                 </div>
             </div>
+        </div>
+
+        <div class="container mx-auto px-4 py-8 relative z-20">
+            <DynamicPageContent :pageData="pageData" :showFallback="false" />
         </div>
     </MainLayout>
 </template>

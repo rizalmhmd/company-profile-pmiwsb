@@ -32,100 +32,88 @@ const chart = computed(() => {
 
         <div class="container mx-auto px-4 py-16 -mt-10 relative z-20">
             <div class="max-w-6xl mx-auto">
-                <div class="relative overflow-hidden rounded-[3rem] border border-gray-100 bg-white/80 shadow-2xl backdrop-blur p-6 sm:p-10">
-                    <!-- subtle premium background -->
+                <div class="relative overflow-hidden rounded-[2.5rem] border border-gray-100 bg-white/70 shadow-2xl backdrop-blur-xl p-8 sm:p-16">
+                    <!-- Subtle premium background glow -->
                     <div class="pointer-events-none absolute inset-0">
-                        <div class="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-red-600/10 blur-3xl" />
-                        <div class="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-gray-900/10 blur-3xl" />
-                        <div class="absolute inset-0 opacity-[0.06] [background-image:radial-gradient(#111827_1px,transparent_1px)] [background-size:18px_18px]" />
+                        <div class="absolute -top-32 -right-32 h-[500px] w-[500px] rounded-full bg-red-600/5 blur-[100px]" />
+                        <div class="absolute -bottom-32 -left-32 h-[500px] w-[500px] rounded-full bg-slate-500/10 blur-[100px]" />
+                        <div class="absolute inset-0 opacity-[0.03] [background-image:radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px]" />
                     </div>
 
-                    <!-- Desktop (no lines; clear hierarchy) -->
-                    <div class="relative hidden lg:block">
-                        <div class="mx-auto max-w-6xl">
-                            <div class="grid grid-cols-12 gap-8 items-start">
-                                <!-- Pengurus -->
-                                <div class="col-span-12 flex justify-center">
-                                    <div class="group relative">
-                                        <div class="absolute -inset-1 rounded-2xl bg-gradient-to-r from-red-600/25 to-gray-900/20 blur opacity-60 group-hover:opacity-90 transition" />
-                                        <div class="relative w-[300px] min-h-[96px] flex flex-col justify-center px-12 py-6 rounded-2xl border border-gray-200 bg-white shadow-lg text-center">
-                                            <div class="text-[11px] uppercase tracking-[0.22em] font-black text-gray-400">Level 1</div>
-                                            <div class="mt-1 text-xl font-black tracking-tight text-gray-900">{{ chart.pengurus }}</div>
-                                        </div>
-                                    </div>
+                    <div class="relative z-10 flex flex-col items-center">
+                        
+                        <!-- Level 1: Pengurus -->
+                        <div class="relative flex flex-col items-center w-full">
+                            <div class="group relative z-10 w-full max-w-[340px]">
+                                <div class="absolute -inset-0.5 rounded-2xl bg-gradient-to-br from-red-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur"></div>
+                                <div class="relative flex flex-col items-center justify-center p-6 rounded-2xl border border-gray-200/75 border-t-[6px] border-t-red-600 bg-white shadow-sm hover:shadow-xl transition-all duration-300 transform group-hover:-translate-y-1">
+                                    <span class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-0.5 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 border border-slate-100">
+                                        Level 1
+                                    </span>
+                                    <h3 class="text-xl font-bold text-gray-900 text-center">{{ chart.pengurus }}</h3>
                                 </div>
+                            </div>
+                            <!-- Vertical Line Down -->
+                            <div class="w-px h-10 bg-gray-300"></div>
+                        </div>
 
-                                <!-- Chevron down -->
-                                <div class="col-span-12 flex justify-center -mt-2 text-gray-400">
-                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                    </svg>
+                        <!-- Level 2: Sekretariat -->
+                        <div class="relative flex flex-col items-center w-full">
+                            <div class="group relative z-10 w-full max-w-[340px]">
+                                <div class="absolute -inset-0.5 rounded-2xl bg-gradient-to-br from-red-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur"></div>
+                                <div class="relative flex flex-col items-center justify-center p-6 rounded-2xl border border-gray-200/75 border-t-[6px] border-t-red-600 bg-white shadow-sm hover:shadow-xl transition-all duration-300 transform group-hover:-translate-y-1">
+                                    <span class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-0.5 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 border border-slate-100">
+                                        Pendukung
+                                    </span>
+                                    <h3 class="text-xl font-bold text-gray-900 text-center">{{ chart.sekretariat }}</h3>
                                 </div>
+                            </div>
+                            <!-- Vertical Line Down -->
+                            <div class="w-px h-10 bg-gray-300"></div>
+                        </div>
 
-                                <!-- Row 2: Sekretariat aligned right -->
-                                <div class="col-span-12 flex justify-center">
-                                    <div class="group relative">
-                                        <div class="absolute -inset-1 rounded-2xl bg-gradient-to-r from-gray-900/20 to-red-600/20 blur opacity-60 group-hover:opacity-90 transition" />
-                                        <div class="relative w-[340px] min-h-[96px] flex flex-col justify-center px-12 py-6 rounded-2xl border border-gray-200 bg-white shadow-lg text-center">
-                                            <div class="text-[11px] uppercase tracking-[0.22em] font-black text-gray-400">Pendukung</div>
-                                            <div class="mt-1 text-xl font-black tracking-tight text-gray-900">{{ chart.sekretariat }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Chevron down -->
-                                <div class="col-span-12 flex justify-center -mt-2 text-gray-400">
-                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </div>
-
-                                <!-- Units -->
-                                <div class="col-span-12">
-                                    <div class="grid grid-cols-3 gap-8">
-                                        <div v-for="(u, idx) in chart.units" :key="idx" class="group relative">
-                                            <div class="absolute -inset-1 rounded-2xl bg-gradient-to-r from-red-600/12 to-gray-900/12 blur opacity-60 group-hover:opacity-95 transition" />
-                                            <div class="relative min-h-[104px] flex flex-col justify-center px-10 py-6 rounded-2xl border border-gray-200 bg-white shadow-lg text-center">
-                                                <div class="text-[11px] uppercase tracking-[0.22em] font-black text-gray-400">Unit</div>
-                                                <div class="mt-1 text-xl font-black tracking-tight text-gray-900">{{ u }}</div>
-                                            </div>
-                                        </div>
+                        <!-- Level 3: Units (Desktop) -->
+                        <div class="hidden md:flex relative w-full max-w-5xl mt-0">
+                            <!-- Horizontal Line Connecting Branches -->
+                            <!-- 16.666% matches the center of the first and last child in a 3-column layout -->
+                            <div class="absolute top-0 left-[16.666%] right-[16.666%] h-px bg-gray-300"></div>
+                            
+                            <div v-for="(u, idx) in chart.units" :key="idx" class="relative w-1/3 flex flex-col items-center pt-8 px-4 lg:px-6">
+                                <!-- Vertical Line to Branch -->
+                                <div class="absolute top-0 w-px h-8 bg-gray-300"></div>
+                                
+                                <div class="group relative w-full h-full">
+                                    <div class="absolute -inset-0.5 rounded-2xl bg-gradient-to-br from-red-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur"></div>
+                                    <div class="relative h-full flex flex-col items-center justify-center p-6 rounded-2xl border border-gray-200/75 border-t-[6px] border-t-red-600 bg-white shadow-sm hover:shadow-xl transition-all duration-300 transform group-hover:-translate-y-1">
+                                        <span class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-0.5 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 border border-slate-100">
+                                            Unit
+                                        </span>
+                                        <h3 class="text-lg font-bold text-gray-900 text-center">{{ u }}</h3>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Mobile / Tablet (clean cards) -->
-                    <div class="lg:hidden space-y-6">
-                        <div class="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
-                            <div class="text-[10px] font-black uppercase tracking-widest text-gray-500">Level 1</div>
-                            <div class="mt-2 text-xl font-black text-gray-900">{{ chart.pengurus }}</div>
-                        </div>
-
-                        <div class="flex items-center justify-center text-gray-400">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </div>
-
-                        <div class="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
-                            <div class="text-[10px] font-black uppercase tracking-widest text-gray-500">Pendukung</div>
-                            <div class="mt-2 text-xl font-black text-gray-900">{{ chart.sekretariat }}</div>
-                        </div>
-
-                        <div class="flex items-center justify-center text-gray-400">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div v-for="(u, idx) in chart.units" :key="idx" class="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
-                                <div class="text-[10px] font-black uppercase tracking-widest text-gray-500">Unit</div>
-                                <div class="mt-2 text-lg font-black text-gray-900">{{ u }}</div>
+                        <!-- Mobile Stack Structure -->
+                        <div class="md:hidden flex flex-col items-center w-full relative -mt-4">
+                            <div v-for="(u, idx) in chart.units" :key="idx" class="relative w-full flex flex-col items-center">
+                                <!-- Connector line -->
+                                <div v-if="idx > 0" class="w-px h-10 bg-gray-300"></div>
+                                <!-- In mobile we need the first one to connect to the top line seamlessly -->
+                                <div v-if="idx === 0" class="w-px h-4 bg-gray-300"></div>
+                                
+                                <div class="group relative w-full max-w-[340px]">
+                                    <div class="absolute -inset-0.5 rounded-2xl bg-gradient-to-br from-red-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur"></div>
+                                    <div class="relative h-full flex flex-col items-center justify-center p-6 rounded-2xl border border-gray-200/75 border-t-[6px] border-t-red-600 bg-white shadow-sm hover:shadow-xl transition-all duration-300 transform group-hover:-translate-y-1">
+                                        <span class="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-0.5 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 border border-slate-100">
+                                            Unit
+                                        </span>
+                                        <h3 class="text-lg font-bold text-gray-900 text-center">{{ u }}</h3>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                        
                     </div>
                 </div>
             </div>

@@ -313,21 +313,23 @@ Route::get('/{category}/{page?}/{subpage?}', function ($category, $page = null, 
         $componentName = 'Info/' . ucfirst($subpage);
         $pageSlug = $subpage;
     } elseif ($page) {
-        // Special mappings for services to static pages
+        // Special mappings for services to static pages: 'url-path' => ['ComponentName', 'db_slug']
         $mappings = [
-            'layanan-ambulance' => 'Sibats',
-            'ambulance' => 'Sibats',
-            'ambulans' => 'Sibats',
-            'layanan-ambulans' => 'Sibats',
-            'pertolongan-pertama' => 'PertolonganPertama',
+            'layanan-ambulance' => ['Sibats', 'sibats'],
+            'ambulance' => ['Sibats', 'sibats'],
+            'ambulans' => ['Sibats', 'sibats'],
+            'layanan-ambulans' => ['Sibats', 'sibats'],
+            'sibats' => ['Sibats', 'sibats'],
+            'pertolongan-pertama' => ['PertolonganPertama', 'pertolongan-pertama'],
         ];
 
         if (isset($mappings[$page])) {
-            $componentName = $mappings[$page];
+            $componentName = $mappings[$page][0];
+            $pageSlug = $mappings[$page][1];
         } else {
             $componentName = str_replace('-', '', ucwords($page, '-'));
+            $pageSlug = $page;
         }
-        $pageSlug = $page;
     } else {
         abort(404);
     }
@@ -355,9 +357,16 @@ Route::get('/{category}/{page?}/{subpage?}', function ($category, $page = null, 
     // 1. Try to find the specific Vue component
     if (file_exists(resource_path("js/Pages/{$component}.vue"))) {
         $pageData = \App\Models\Page::where('slug', $pageSlug)->first();
-        return Inertia::render($component, [
-            'pageData' => $pageData
-        ]);
+        
+        $props = ['pageData' => $pageData];
+        
+        if ($component === 'Donor/Jadwal') {
+            $props['schedules'] = \App\Models\BloodDonor::whereDate('date', '>=', today())->orderBy('date', 'asc')->get();
+        } elseif ($component === 'Donor/Info/Stok') {
+            $props['bloodStocks'] = \App\Models\BloodStock::all();
+        }
+
+        return Inertia::render($component, $props);
     }
     
     // 2. Fallback for Services in Markas category

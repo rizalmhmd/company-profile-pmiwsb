@@ -1,6 +1,6 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { useForm, router } from '@inertiajs/vue3';
+import { useForm, router, Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const props = defineProps({ categories: Array });
@@ -53,7 +53,18 @@ const deleteCategory = (id) => {
 </script>
 
 <template>
-    <AdminLayout title="Kategori Berita">
+    <AdminLayout title="Kelola Berita & Kategori">
+        <div class="flex border-b border-gray-200 mb-6 gap-8">
+            <Link href="/manage/posts" class="pb-3 border-b-2 font-semibold text-sm transition"
+                :class="$page.url.startsWith('/manage/posts') ? 'border-red-600 text-red-600' : 'border-transparent text-gray-500 hover:text-gray-700'">
+                Daftar Berita
+            </Link>
+            <Link href="/manage/categories" class="pb-3 border-b-2 font-semibold text-sm transition"
+                :class="$page.url.startsWith('/manage/categories') ? 'border-red-600 text-red-600' : 'border-transparent text-gray-500 hover:text-gray-700'">
+                Kategori Berita
+            </Link>
+        </div>
+
         <div class="flex items-center justify-between mb-6">
             <p class="text-gray-500 text-sm">Kelola kategori untuk pengelompokan berita.</p>
             <button @click="openCreateModal"

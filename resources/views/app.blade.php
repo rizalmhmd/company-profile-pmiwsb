@@ -13,6 +13,10 @@
         <!-- Favicon -->
         <link rel="icon" type="image/x-icon" href="{{ \App\Models\SiteSetting::first()?->favicon_url ?? asset('favicon.ico') }}">
 
+        <!-- Flatpickr (Time Picker) -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
         <!-- Scripts -->
         @vite(['resources/js/app.js'])
         @inertiaHead

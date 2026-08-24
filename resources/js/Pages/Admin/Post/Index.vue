@@ -9,7 +9,18 @@ const formatDate = (d) => d ? new Date(d).toLocaleDateString('id-ID', { day:'num
 </script>
 
 <template>
-    <AdminLayout title="Berita">
+    <AdminLayout title="Kelola Berita & Kategori">
+        <div class="flex border-b border-gray-200 mb-6 gap-8">
+            <Link href="/manage/posts" class="pb-3 border-b-2 font-semibold text-sm transition"
+                :class="$page.url.startsWith('/manage/posts') ? 'border-red-600 text-red-600' : 'border-transparent text-gray-500 hover:text-gray-700'">
+                Daftar Berita
+            </Link>
+            <Link href="/manage/categories" class="pb-3 border-b-2 font-semibold text-sm transition"
+                :class="$page.url.startsWith('/manage/categories') ? 'border-red-600 text-red-600' : 'border-transparent text-gray-500 hover:text-gray-700'">
+                Kategori Berita
+            </Link>
+        </div>
+
         <div class="flex items-center justify-between mb-6">
             <p class="text-gray-500 text-sm">Kelola artikel dan berita yang tampil di website.</p>
             <Link href="/manage/posts/create"

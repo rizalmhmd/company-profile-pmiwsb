@@ -1,7 +1,7 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { useForm } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 const props = defineProps({ donor: Object });
 const isEdit = computed(() => !!props.donor);
@@ -12,6 +12,32 @@ const form = useForm({
     date:       props.donor?.date       ?? '',
     time_start: props.donor?.time_start ?? '',
     time_end:   props.donor?.time_end   ?? '',
+});
+
+const timeStartRef = ref(null);
+const timeEndRef = ref(null);
+
+onMounted(() => {
+    if (window.flatpickr) {
+        window.flatpickr(timeStartRef.value, {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true,
+            onChange: function(selectedDates, dateStr) {
+                form.time_start = dateStr;
+            }
+        });
+        window.flatpickr(timeEndRef.value, {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true,
+            onChange: function(selectedDates, dateStr) {
+                form.time_end = dateStr;
+            }
+        });
+    }
 });
 
 const submit = () => {
@@ -57,13 +83,13 @@ const submit = () => {
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1.5">Jam Mulai <span class="text-red-500">*</span></label>
-                            <input v-model="form.time_start" type="time"
-                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-400 transition"/>
+                            <input ref="timeStartRef" v-model="form.time_start" type="text" placeholder="08:00"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-400 transition bg-white cursor-pointer"/>
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1.5">Jam Selesai <span class="text-red-500">*</span></label>
-                            <input v-model="form.time_end" type="time"
-                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-400 transition"/>
+                            <input ref="timeEndRef" v-model="form.time_end" type="text" placeholder="12:00"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-400 transition bg-white cursor-pointer"/>
                         </div>
                     </div>
                     <div class="flex gap-3 pt-2 border-t border-gray-100">
