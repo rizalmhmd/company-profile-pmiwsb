@@ -1,5 +1,7 @@
 <template>
-    <Head title="Display Antrian" />
+    <Head title="Display Antrian">
+        <meta name="referrer" content="no-referrer" />
+    </Head>
     <div class="min-h-screen bg-slate-100 flex flex-col font-sans overflow-hidden relative">
         
         <!-- Background Blobs -->
@@ -171,7 +173,6 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import axios from 'axios';
 import { Head } from '@inertiajs/vue3';
-import * as googleTTS from 'google-tts-api';
 
 const props = defineProps({
     settings: Object,
@@ -253,22 +254,45 @@ const fetchData = async () => {
 };
 
 // Text-to-Speech Logic
-const speakQueue = (queue) => {
+const speakQueue = async (queue) => {
     if (queue.status !== 'calling') return;
 
-    const text = `Panggilan kepada pasien bernama, ${queue.patient_name || 'Pasien'}, Silakan menuju ke, ${queue.counter?.name}`;
-    
     try {
-        const url = googleTTS.getAudioUrl(text, {
-            lang: 'id',
-            slow: false,
-            host: 'https://translate.google.com',
-        });
+        console.log("Mencoba memutar audio lengkap...");
         
-        const audio = new Audio(url);
-        audio.play().catch(e => console.error("Gagal memutar audio TTS:", e));
+        const generateTTSUrl = (text) => {
+            const safeText = encodeURIComponent(String(text).substring(0, 200));
+            return `https://translate.google.com/translate_tts?ie=UTF-8&q=${safeText}&tl=id&client=tw-ob`;
+        };
+        
+        const patientNameUrl = generateTTSUrl(queue.patient_name || 'Pasien');
+        const counterNameUrl = generateTTSUrl(queue.counter?.name || 'Loket');
+        
+        const audioUrls = [
+            '/audio/panggilan.mp3',
+            patientNameUrl,
+            '/audio/silakan.mp3',
+            counterNameUrl
+        ];
+        
+        for (const url of audioUrls) {
+            await new Promise((resolve) => {
+                const audio = new Audio(url);
+                
+                audio.onended = resolve;
+                audio.onerror = (e) => {
+                    console.error("Error pada file:", url, e);
+                    resolve(); 
+                };
+                
+                audio.play().catch((e) => {
+                    console.error("Browser memblokir audio:", url, e);
+                    resolve();
+                });
+            });
+        }
     } catch (err) {
-        console.error("Gagal membuat URL TTS:", err);
+        console.error("Gagal memproses antrian suara:", err);
     }
 };
 
