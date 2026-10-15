@@ -22,7 +22,7 @@ $app = Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->redirectGuestsTo(fn (\Illuminate\Http\Request $request) => 
-            $request->is('dashboard/perawat*') ? route('login.perawat') : route('login.admin')
+            route('login.admin')
         );
     })
     ->withExceptions(function (Exceptions $exceptions): void {

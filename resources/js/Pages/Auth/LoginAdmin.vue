@@ -80,11 +80,8 @@ const submit = () => {
                 </div>
             </form>
 
-            <!-- Back Link & Other Login -->
-            <div class="text-center space-y-4 mt-6">
-                <Link href="/login/perawat" class="text-sm font-medium text-red-600 hover:text-red-700 block">
-                    Masuk sebagai Perawat &rarr;
-                </Link>
+            <!-- Back Link -->
+            <div class="text-center mt-6">
                 <Link href="/" class="text-sm text-gray-500 hover:text-gray-700 block">
                     &larr; Kembali ke Beranda
                 </Link>

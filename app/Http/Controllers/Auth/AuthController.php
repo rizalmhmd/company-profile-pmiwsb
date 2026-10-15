@@ -23,13 +23,13 @@ class AuthController extends Controller
     /**
      * Show perawat login form
      */
-    public function showPerawatLogin(): Response
+    public function showPerawatLogin(): RedirectResponse
     {
-        return Inertia::render('Auth/LoginPerawat');
+        return redirect()->route('login.admin');
     }
 
     /**
-     * Handle admin login
+     * Handle login for Admin & Perawat
      */
     public function storeAdminLogin(Request $request): RedirectResponse
     {
@@ -44,15 +44,15 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt(['email' => $validated['email'], 'password' => $validated['password']], $request->boolean('remember'))) {
+            $request->session()->regenerate();
             $user = Auth::user();
             
-            // Check if user is admin
-            if ($user->isAdmin()) {
-                return redirect()->intended(route('dashboard.admin'));
-            } else {
-                Auth::logout();
-                return redirect()->back()->with('error', 'Akun ini bukan admin. Silakan gunakan akun admin yang tepat.');
+            // Redirect to appropriate dashboard based on user role
+            if ($user->isPerawat()) {
+                return redirect()->intended(route('dashboard.perawat'));
             }
+
+            return redirect()->intended(route('dashboard.admin'));
         }
 
         return redirect()->back()->with('error', 'Email atau password salah.');
@@ -63,29 +63,7 @@ class AuthController extends Controller
      */
     public function storePerawatLogin(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|min:6',
-        ], [
-            'email.required' => 'Email harus diisi',
-            'email.email' => 'Format email tidak valid',
-            'password.required' => 'Password harus diisi',
-            'password.min' => 'Password minimal 6 karakter',
-        ]);
-
-        if (Auth::attempt(['email' => $validated['email'], 'password' => $validated['password']], $request->boolean('remember'))) {
-            $user = Auth::user();
-            
-            // Check if user is perawat
-            if ($user->isPerawat()) {
-                return redirect()->intended(route('dashboard.perawat'));
-            } else {
-                Auth::logout();
-                return redirect()->back()->with('error', 'Akun ini bukan perawat. Silakan gunakan akun perawat yang tepat.');
-            }
-        }
-
-        return redirect()->back()->with('error', 'Email atau password salah.');
+        return $this->storeAdminLogin($request);
     }
 
     /**
