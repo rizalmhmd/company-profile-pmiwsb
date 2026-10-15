@@ -6,6 +6,17 @@ import HeroSection from '@/Components/HeroSection.vue';
 const props = defineProps({
     posts: Object,
 });
+
+const stripHtml = (html) => {
+    if (!html) return '';
+    return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
+};
+
+const truncate = (text, length = 140) => {
+    if (!text) return '';
+    const clean = stripHtml(text);
+    return clean.length > length ? clean.substring(0, length) + '...' : clean;
+};
 </script>
 
 <template>
@@ -37,7 +48,9 @@ const props = defineProps({
                             <h2 class="text-xl font-black text-gray-900 mb-4 group-hover:text-red-600 transition line-clamp-2 leading-tight">{{ post.title }}</h2>
                         </Link>
                         
-                        <p class="text-gray-500 text-sm leading-relaxed mb-8 line-clamp-3" v-html="post.content"></p>
+                        <p class="text-gray-500 text-sm leading-relaxed mb-8 line-clamp-3">
+                            {{ truncate(post.content, 140) }}
+                        </p>
                         
                         <div class="mt-auto pt-6 border-t border-gray-50 flex items-center justify-between">
                             <Link :href="`/berita/${post.slug}`" class="text-xs font-black uppercase tracking-widest text-red-600 flex items-center gap-2 group-hover:gap-4 transition-all">

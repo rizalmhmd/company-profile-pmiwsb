@@ -16,6 +16,17 @@ const props = defineProps({
     services: Array,
     latestPosts: Array,
 });
+
+const stripHtml = (html) => {
+    if (!html) return '';
+    return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
+};
+
+const truncate = (text, length = 120) => {
+    if (!text) return '';
+    const clean = stripHtml(text);
+    return clean.length > length ? clean.substring(0, length) + '...' : clean;
+};
 </script>
 
 <template>
@@ -118,45 +129,38 @@ const props = defineProps({
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                        <div v-for="service in services" :key="service.id" class="group relative bg-gray-900 rounded-[2.5rem] shadow-xl overflow-hidden hover:shadow-2xl hover:shadow-red-900/20 transition-all duration-700 h-[400px]">
+                        <Link v-for="service in services" :key="service.id" :href="`/markas/${service.slug}`" class="group relative bg-gray-900 rounded-[2.5rem] shadow-xl overflow-hidden hover:shadow-2xl hover:shadow-red-900/20 transition-all duration-700 h-[400px] block cursor-pointer">
                             <!-- Image Background -->
                             <div class="absolute inset-0 z-0">
                                 <img :src="service.image_url || 'https://images.unsplash.com/photo-1584515933487-779824d29309?q=80&w=2070&auto=format&fit=crop'" 
                                      class="w-full h-full object-cover scale-105 group-hover:scale-125 transition duration-1000 opacity-60 group-hover:opacity-40" 
                                      alt="Service">
-                                <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent"></div>
+                                <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/70 to-transparent"></div>
                             </div>
 
                             <!-- Content -->
-                            <div class="absolute inset-0 z-10 p-10 flex flex-col justify-end">
-                                <!-- Glassmorphism Icon -->
-                                <div class="w-14 h-14 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center text-white mb-6 shadow-xl border border-white/30 transform group-hover:scale-110 group-hover:bg-red-600 group-hover:border-red-500 transition-all duration-500">
-                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" :d="service.icon || 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10'"></path>
-                                    </svg>
-                                </div>
-                                
-                                <h3 class="text-2xl font-black text-white mb-3 transform group-hover:-translate-y-2 transition duration-500 uppercase tracking-tight leading-tight drop-shadow-md">
-                                    {{ service.title }}
-                                </h3>
-                                
-                                <div class="overflow-hidden">
-                                    <p class="text-gray-300 text-sm font-medium leading-relaxed mb-8 transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 line-clamp-3">
+                            <div class="absolute inset-0 z-10 p-8 sm:p-10 flex flex-col justify-end">
+                                <div class="transform group-hover:-translate-y-2 transition-transform duration-500 ease-out">
+                                    <h3 class="text-2xl font-black text-white uppercase tracking-tight leading-tight drop-shadow-md">
+                                        {{ service.title }}
+                                    </h3>
+                                    
+                                    <p class="text-gray-300 text-sm font-medium leading-relaxed mt-3 mb-6 line-clamp-3 group-hover:text-white transition-colors duration-300">
                                         {{ service.description }}
                                     </p>
+                                    
+                                    <div class="inline-flex items-center gap-3 text-white text-xs font-black uppercase tracking-[0.2em] group/btn">
+                                        <span class="relative">
+                                            Selengkapnya
+                                            <span class="absolute -bottom-1 left-0 w-full h-0.5 bg-red-600 scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></span>
+                                        </span>
+                                        <svg class="w-5 h-5 transform group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                        </svg>
+                                    </div>
                                 </div>
-                                
-                                <Link :href="`/markas/${service.slug}`" class="inline-flex items-center gap-3 text-white text-xs font-black uppercase tracking-[0.2em] group/btn">
-                                    <span class="relative">
-                                        Selengkapnya
-                                        <span class="absolute -bottom-1 left-0 w-full h-0.5 bg-red-600 scale-x-0 group-hover/btn:scale-x-100 transition-transform origin-left"></span>
-                                    </span>
-                                    <svg class="w-5 h-5 transform group-hover/btn:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                                    </svg>
-                                </Link>
                             </div>
-                        </div>
+                        </Link>
                     </div>
                 </div>
             </section>
@@ -188,7 +192,9 @@ const props = defineProps({
                                     <Link :href="`/berita/${post.slug}`">
                                         <h3 class="text-sm sm:text-xl font-bold mt-1 sm:mt-2 mb-1 sm:mb-4 hover:text-red-600 transition line-clamp-2 leading-tight">{{ post.title }}</h3>
                                     </Link>
-                                    <p class="hidden sm:block text-gray-500 text-sm mb-6 line-clamp-3 leading-relaxed" v-html="post.content"></p>
+                                    <p class="hidden sm:block text-gray-500 text-sm mb-6 line-clamp-3 leading-relaxed">
+                                        {{ truncate(post.content, 130) }}
+                                    </p>
                                 </div>
                                 <div class="flex items-center justify-between text-[10px] sm:text-xs text-gray-400 border-t border-gray-50 pt-2 sm:pt-6 font-bold uppercase tracking-widest">
                                     <span>{{ new Date(post.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) }}</span>
